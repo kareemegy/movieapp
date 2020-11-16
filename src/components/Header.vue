@@ -58,7 +58,6 @@ export default {};
   width: 100%;
   height: 70px;
   background-color: #032541;
-  margin-bottom: 10px;
 }
 li {
   list-style: none;
