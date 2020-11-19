@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <!--  placeholder lib-->
     <swiper
       :slides-per-view="9"
       @swiper="onSwiper"
@@ -30,21 +31,80 @@
           :src="baseImageURL + movie.poster_path"
           alt="movie image"
         />
-        <div class="movie_description">
-          <h3 v-text="movie.title ? movie.title : movie.name"></h3>
-          <h4
-            v-text="
-              movie.release_date
-                ? 'Nov ' + movie.release_date
-                : 'Nov ' + movie.first_air_date
-            "
-          ></h4>
-        </div>
+        <transition name="fade">
+          <div class="movie_description" v-if="data.results">
+            <h3 v-text="movie.title ? movie.title : movie.name"></h3>
+            <h4
+              v-text="
+                movie.release_date
+                  ? 'Nov ' + movie.release_date
+                  : 'Nov ' + movie.first_air_date
+              "
+            ></h4>
+          </div>
+        </transition>
+      </swiper-slide>
+
+      <swiper-slide class="slides" v-for="item in 10" :Key="item">
+        <svg
+          v-if="!data.results"
+          role="img"
+          width="400"
+          height="460"
+          aria-labelledby="loading-aria"
+          viewBox="0 0 400 460"
+          preserveAspectRatio="none"
+        >
+          <title id="loading-aria">Loading...</title>
+          <rect
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            clip-path="url(#clip-path)"
+            style='fill: url("#fill");'
+          ></rect>
+          <defs>
+            <clipPath id="clip-path">
+              <rect x="19" y="4" rx="17" ry="17" width="131" height="175" />
+              <rect x="24" y="189" rx="6" ry="6" width="104" height="17" />
+              <rect x="24" y="215" rx="6" ry="6" width="75" height="17" />
+            </clipPath>
+            <linearGradient id="fill">
+              <stop offset="0.599964" stop-color="#bec0c1" stop-opacity="1">
+                <animate
+                  attributeName="offset"
+                  values="-2; -2; 1"
+                  keyTimes="0; 0.25; 1"
+                  dur="2s"
+                  repeatCount="indefinite"
+                ></animate>
+              </stop>
+              <stop offset="1.59996" stop-color="#ecebeb" stop-opacity="1">
+                <animate
+                  attributeName="offset"
+                  values="-1; -1; 2"
+                  keyTimes="0; 0.25; 1"
+                  dur="2s"
+                  repeatCount="indefinite"
+                ></animate>
+              </stop>
+              <stop offset="2.59996" stop-color="#bec0c1" stop-opacity="1">
+                <animate
+                  attributeName="offset"
+                  values="0; 0; 3"
+                  keyTimes="0; 0.25; 1"
+                  dur="2s"
+                  repeatCount="indefinite"
+                ></animate>
+              </stop>
+            </linearGradient>
+          </defs>
+        </svg>
       </swiper-slide>
     </swiper>
   </div>
 </template>
-
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/swiper.scss";
@@ -63,6 +123,7 @@ export default {
         "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       isActive: true,
       isSwitch: true,
+      fade: true,
     };
   },
   methods: {
@@ -84,6 +145,7 @@ export default {
     async onTv() {
       console.log("On TV");
       if (!this.isActive && !this.isSwitch) {
+        // this.fade = true;
         this.isActive = true;
         this.isSwitch = true;
         this.getData(this.inTheatersURL);
@@ -91,6 +153,7 @@ export default {
     },
     async inTheaters() {
       if (this.isActive && this.isSwitch) {
+        // this.fade = false;
         this.isActive = false;
         this.isSwitch = false;
         this.getData(this.onTvURl);
@@ -189,6 +252,25 @@ h1 {
   .onTv h3 {
     padding-right: 30px;
     padding-left: 10px;
+  }
+  .fade_out {
+    animation: fadeIn ease 6s;
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 }
 </style>

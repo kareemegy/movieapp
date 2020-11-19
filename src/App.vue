@@ -4,6 +4,7 @@
     <div class="container">
       <Search />
       <PopularShows />
+      <!-- <TrendingMovies /> -->
     </div>
   </div>
 </template>
@@ -12,11 +13,13 @@
 import Search from "@/components/Search.vue";
 import PopularShows from "@/components/PopularShows.vue";
 import Header from "@/components/Header.vue";
+// import TrendingMovies from "@/components/TrendingMovies.vue";
 export default {
   components: {
     Search,
     PopularShows,
     Header,
+    // TrendingMovies,
   },
 };
 </script>
