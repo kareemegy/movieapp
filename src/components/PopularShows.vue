@@ -93,8 +93,9 @@ export default {
 
 <style lang="scss" scoped>
 h1 {
-  font-size: 26px;
-  margin: 20px 0px 5px 20px;
+  font-family: sans-serif;
+  font-size: 30px;
+  margin: 24px 0px 5px 20px;
 }
 .img {
   width: 150px;
@@ -130,15 +131,13 @@ h1 {
   :nth-child(1) {
     margin-right: 5px;
   }
-  .onTv {
+  .onTv,
+  .inTheaters {
     height: 100%;
     border-radius: 10px;
   }
   .inTheaters {
     padding-left: 10px;
-    margin-left: 15px;
-    border-radius: 10px;
-    height: 100%;
   }
 
   .active {
@@ -163,18 +162,19 @@ h1 {
     -moz-text-fill-color: transparent;
   }
 
-  .inTheaters h3 {
-    cursor: pointer;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding-left: 5px;
-  }
+  .inTheaters,
   .onTv h3 {
     cursor: pointer;
     height: 100%;
     display: flex;
     align-items: center;
+  }
+  .inTheaters h3 {
+    padding-left: 5px;
+    padding-right: 20px;
+  }
+  .onTv h3 {
+    padding-right: 30px;
     padding-left: 10px;
   }
 }

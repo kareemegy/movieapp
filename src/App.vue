@@ -5,7 +5,6 @@
       <Search />
       <PopularShows />
     </div>
-    <!-- <router-view /> -->
   </div>
 </template>
 
