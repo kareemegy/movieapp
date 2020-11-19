@@ -31,8 +31,14 @@
           alt="movie image"
         />
         <div class="movie_description">
-          <h3 v-text="movie.title"></h3>
-          <h4 v-text="movie.release_date"></h4>
+          <h3 v-text="movie.title ? movie.title : movie.name"></h3>
+          <h4
+            v-text="
+              movie.release_date
+                ? 'Nov ' + movie.release_date
+                : 'Nov ' + movie.first_air_date
+            "
+          ></h4>
         </div>
       </swiper-slide>
     </swiper>
@@ -51,6 +57,10 @@ export default {
     return {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
+      onTvURl:
+        "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
+      inTheatersURL:
+        "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       isActive: true,
       isSwitch: true,
     };
@@ -60,33 +70,36 @@ export default {
       console.log(swiper);
     },
     onSlideChange() {
-      console.log("slide change");
+      // console.log("slide change");
     },
-    onTv() {
+    async getData(URL) {
+      try {
+        let response = await fetch(URL);
+        let data = await response.json();
+        this.data = data;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async onTv() {
       console.log("On TV");
       if (!this.isActive && !this.isSwitch) {
         this.isActive = true;
         this.isSwitch = true;
+        this.getData(this.inTheatersURL);
       }
     },
-    inTheaters() {
+    async inTheaters() {
       if (this.isActive && this.isSwitch) {
         this.isActive = false;
         this.isSwitch = false;
+        this.getData(this.onTvURl);
       }
       console.log("inTheaters");
     },
   },
-  async created() {
-    try {
-      let response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1"
-      );
-      let data = await response.json();
-      this.data = data;
-    } catch (err) {
-      console.error(err);
-    }
+  created() {
+    this.getData(this.inTheatersURL);
   },
 };
 </script>
@@ -94,7 +107,7 @@ export default {
 <style lang="scss" scoped>
 h1 {
   font-family: sans-serif;
-  font-size: 30px;
+  font-size: 26px;
   margin: 24px 0px 5px 20px;
 }
 .img {
