@@ -1,5 +1,5 @@
 <template>
-  <div class="hero">
+  <div class="hero ">
     <h1>Welcome.</h1>
     <h2>Millions of movies, TV shows and people to discover. Explore now.</h2>
     <label for=""> </label>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex">
+    <div class="d-flex ">
       <h1>What's popular</h1>
       <div class="switch">
         <div class="onTv" :class="{ active: isActive }" @click="onTv">
@@ -20,31 +20,33 @@
       :slides-per-view="9"
       @swiper="onSwiper"
       @slideChange="onSlideChange"
+      :class="{
+        fade_out: fade,
+      }"
     >
       <swiper-slide
         class="slides"
+        :class="{ fade_out: !fade2, fade_out2: data.results }"
         v-for="movie in data.results"
         :key="movie.id"
       >
         <img
-          class="img"
+          class="img "
           :src="baseImageURL + movie.poster_path"
           alt="movie image"
         />
-        <transition name="fade">
-          <div class="movie_description" v-if="data.results">
-            <h3 v-text="movie.title ? movie.title : movie.name"></h3>
-            <h4
-              v-text="
-                movie.release_date
-                  ? 'Nov ' + movie.release_date
-                  : 'Nov ' + movie.first_air_date
-              "
-            ></h4>
-          </div>
-        </transition>
-      </swiper-slide>
 
+        <div class="movie_description " v-if="data.results">
+          <h3 v-text="movie.title ? movie.title : movie.name"></h3>
+          <h4
+            v-text="
+              movie.release_date
+                ? 'Nov ' + movie.release_date
+                : 'Nov ' + movie.first_air_date
+            "
+          ></h4>
+        </div>
+      </swiper-slide>
       <swiper-slide class="slides" v-for="item in 10" :Key="item">
         <svg
           v-if="!data.results"
@@ -123,7 +125,8 @@ export default {
         "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       isActive: true,
       isSwitch: true,
-      fade: true,
+      fade: false,
+      fade2: true,
     };
   },
   methods: {
@@ -145,7 +148,8 @@ export default {
     async onTv() {
       console.log("On TV");
       if (!this.isActive && !this.isSwitch) {
-        // this.fade = true;
+        this.fade = false;
+        this.fade2 = false;
         this.isActive = true;
         this.isSwitch = true;
         this.getData(this.inTheatersURL);
@@ -153,7 +157,8 @@ export default {
     },
     async inTheaters() {
       if (this.isActive && this.isSwitch) {
-        // this.fade = false;
+        this.fade = true;
+        this.fade2 = true;
         this.isActive = false;
         this.isSwitch = false;
         this.getData(this.onTvURl);
@@ -253,24 +258,20 @@ h1 {
     padding-right: 30px;
     padding-left: 10px;
   }
-  .fade_out {
-    animation: fadeIn ease 6s;
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-  }
+}
 
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade_out {
+  animation: fadeIn ease-in-out 1s;
+}
+.fade_out2 {
+  animation: fadeIn ease-in-out 2.5s;
+}
+@keyframes fadeIn {
+  0% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>
