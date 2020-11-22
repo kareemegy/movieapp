@@ -1,17 +1,18 @@
 <template>
   <div>
     <div class="d-flex ">
-      <h1>What's popular</h1>
+      <!-- <h1>Latest Trailers</h1> -->
+      <h1>Top Rated</h1>
       <div class="switch">
         <div class="onTv" :class="{ active: isActive }" @click="onTv">
-          <h3 :class="{ switch_text_color: isSwitch }">On TV</h3>
+          <h3 :class="{ switch_text_color: isSwitch }">Anime</h3>
         </div>
         <div
           class="inTheaters"
           :class="{ active: !isActive }"
           @click="inTheaters"
         >
-          <h3 :class="{ switch_text_color: !isSwitch }">In Theaters</h3>
+          <h3 :class="{ switch_text_color: !isSwitch }"> Shows</h3>
         </div>
       </div>
     </div>
@@ -120,9 +121,13 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
       onTvURl:
-        "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
+        "https://api.themoviedb.org/3/movie/top_rated?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       inTheatersURL:
-        "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
+        "https://api.themoviedb.org/3/tv/top_rated?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
+      onTvlatestTrailers:
+        "https://api.themoviedb.org/3/tv/{tv_id}/videos?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US",
+      inTheaterslatestTrailers:
+        "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US",
       isActive: true,
       isSwitch: true,
       fade: false,

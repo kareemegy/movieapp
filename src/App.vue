@@ -4,7 +4,8 @@
     <div class="container">
       <Search />
       <PopularShows />
-      <!-- <TrendingMovies /> -->
+      <TopRated />
+      <LatestTrailers />
     </div>
   </div>
 </template>
@@ -13,18 +14,24 @@
 import Search from "@/components/Search.vue";
 import PopularShows from "@/components/PopularShows.vue";
 import Header from "@/components/Header.vue";
-// import TrendingMovies from "@/components/TrendingMovies.vue";
+import LatestTrailers from "@/components/LatestTrailers.vue";
+import TopRated from "@/components/TopRated.vue";
 export default {
   components: {
     Search,
     PopularShows,
     Header,
-    // TrendingMovies,
+    LatestTrailers,
+    TopRated,
   },
 };
 </script>
 
 <style>
+
+body{
+  height: 3000px;
+}
 * {
   margin: 0px;
   padding: 0px;
