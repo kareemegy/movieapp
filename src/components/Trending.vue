@@ -1,18 +1,17 @@
 <template>
-  <div>
+  <div class="trending">
     <div class="d-flex ">
-      <!-- <h1>Latest Trailers</h1> -->
-      <h1>Top Rated</h1>
+      <h1>Trending</h1>
       <div class="switch">
         <div class="onTv" :class="{ active: isActive }" @click="onTv">
-          <h3 :class="{ switch_text_color: isSwitch }">Anime</h3>
+          <h3 :class="{ switch_text_color: isSwitch }">Today</h3>
         </div>
         <div
           class="inTheaters"
           :class="{ active: !isActive }"
           @click="inTheaters"
         >
-          <h3 :class="{ switch_text_color: !isSwitch }"> Shows</h3>
+          <h3 :class="{ switch_text_color: !isSwitch }">This Week</h3>
         </div>
       </div>
     </div>
@@ -120,10 +119,10 @@ export default {
     return {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
-      onTvURl:
-        "https://api.themoviedb.org/3/movie/top_rated?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
-      inTheatersURL:
-        "https://api.themoviedb.org/3/tv/top_rated?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
+      onToday:
+        "https://api.themoviedb.org/3/trending/all/day?api_key=37c26238f996be5bc2090ce0085ff210",
+      onWeek:
+        "https://api.themoviedb.org/3/trending/all/week?api_key=37c26238f996be5bc2090ce0085ff210",
       isActive: true,
       isSwitch: true,
       fade: false,
@@ -153,7 +152,7 @@ export default {
         this.fade2 = false;
         this.isActive = true;
         this.isSwitch = true;
-        this.getData(this.inTheatersURL);
+        this.getData(this.onWeek);
       }
     },
     async inTheaters() {
@@ -162,18 +161,22 @@ export default {
         this.fade2 = true;
         this.isActive = false;
         this.isSwitch = false;
-        this.getData(this.onTvURl);
+        this.getData(this.onToday);
       }
       console.log("inTheaters");
     },
   },
   created() {
-    this.getData(this.inTheatersURL);
+    this.getData(this.onWeek);
   },
 };
 </script>
 
 <style lang="scss" scoped>
+
+.trending{
+  margin-top: 120px;
+}
 h1 {
   font-family: sans-serif;
   font-size: 26px;

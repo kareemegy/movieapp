@@ -6,6 +6,7 @@
       <PopularShows />
       <TopRated />
       <LatestTrailers />
+      <Trending />
     </div>
   </div>
 </template>
@@ -16,6 +17,7 @@ import PopularShows from "@/components/PopularShows.vue";
 import Header from "@/components/Header.vue";
 import LatestTrailers from "@/components/LatestTrailers.vue";
 import TopRated from "@/components/TopRated.vue";
+import Trending from "@/components/Trending.vue";
 export default {
   components: {
     Search,
@@ -23,13 +25,13 @@ export default {
     Header,
     LatestTrailers,
     TopRated,
+    Trending,
   },
 };
 </script>
 
 <style>
-
-body{
+body {
   height: 3000px;
 }
 * {

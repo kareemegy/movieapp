@@ -11,7 +11,7 @@
           :class="{ active: !isActive }"
           @click="inTheaters"
         >
-          <h3 :class="{ switch_text_color: !isSwitch }">Shows</h3>
+          <h3 :class="{ switch_text_color: !isSwitch }">inTheaters</h3>
         </div>
       </div>
     </div>
