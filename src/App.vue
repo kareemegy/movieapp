@@ -8,6 +8,7 @@
       <LatestTrailers />
       <Trending />
     </div>
+      <Footer />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import Header from "@/components/Header.vue";
 import LatestTrailers from "@/components/LatestTrailers.vue";
 import TopRated from "@/components/TopRated.vue";
 import Trending from "@/components/Trending.vue";
+import Footer from "@/components/Footer.vue";
 export default {
   components: {
     Search,
@@ -26,14 +28,13 @@ export default {
     LatestTrailers,
     TopRated,
     Trending,
+    Footer,
   },
 };
 </script>
 
 <style>
-body {
-  height: 3000px;
-}
+
 * {
   margin: 0px;
   padding: 0px;
