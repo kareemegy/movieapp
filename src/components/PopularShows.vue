@@ -17,6 +17,8 @@
     </div>
     <!--  placeholder lib-->
     <swiper
+      class="swiper"
+      ref="swiper"
       :slides-per-view="9"
       @swiper="onSwiper"
       @slideChange="onSlideChange"
@@ -47,7 +49,13 @@
           ></h4>
         </div>
       </swiper-slide>
-      <swiper-slide class="slides" v-for="item in 10" :Key="item">
+
+      <swiper-slide
+        class="slides"
+        v-for="item in 10"
+        :Key="item"
+        v-show="!data.results"
+      >
         <svg
           v-if="!data.results"
           role="img"
@@ -109,7 +117,6 @@
 </template>
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/swiper.scss";
 export default {
   components: {
     Swiper,
@@ -181,14 +188,15 @@ h1 {
 .img {
   width: 150px;
   height: 220px;
-  border-radius: 10px;
+  border-radius: 20px;
+  padding: 8px;
 }
 .slides {
-  margin: 10px 20px;
   height: 354px;
 }
 
 .movie_description {
+  padding: 8px;
   font-size: 13px;
   font-weight: 700;
   font-size: 14px;
