@@ -216,7 +216,7 @@ h1 {
 
 .img {
   width: 300px;
-  height: 230px;
+  height: 250px;
   border-radius: 10px;
 }
 

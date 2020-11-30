@@ -37,16 +37,16 @@
           fade_out2: data.results,
           hide: !data.results,
         }"
-        Pagination
         v-for="movie in data.results"
         :key="movie.id"
       >
-        <img
-          class="img"
-          :src="baseImageURL + movie.poster_path"
-          alt="movie image"
-        />
-
+        <router-link :to="`/details/${movie.id}`">
+          <img
+            class="img"
+            :src="baseImageURL + movie.poster_path"
+            alt="movie image"
+          />
+        </router-link>
         <div class="movie_description">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
           <h4
@@ -215,7 +215,7 @@ h1 {
 }
 .img {
   width: 150px;
-  height: 220px;
+  height: 250px;
   border-radius: 20px;
   padding: 8px;
 }

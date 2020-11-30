@@ -1,22 +1,28 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
-import Home from '../App.vue'
-
+import { createRouter, createWebHistory } from "vue-router";
+import HomePage from "@/views/HomePage.vue";
+import GetDetails from "@/components/GetDetails.vue";
+import NotFound from "@/components/NotFound.vue";
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/",
+    name: "Home",
+    component: HomePage,
   },
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  // }
-]
+  {
+    path: "/details/:id",
+    name: "Details",
+    component: GetDetails,
+  },
+
+  {
+    path: "/:catchAll(.*)",
+    component: NotFound,
+  },
+];
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+export default router;

@@ -205,7 +205,7 @@ h1 {
 }
 .img {
   width: 150px;
-  height: 220px;
+  height: 250px;
   border-radius: 20px;
   padding: 8px;
 }
