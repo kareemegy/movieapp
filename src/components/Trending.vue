@@ -1,15 +1,16 @@
 <template>
-  <div class="trending">
+  <div>
     <div class="d-flex ">
+      <!-- <h1>Latest Trailers</h1> -->
       <h1>Trending</h1>
       <div class="switch">
-        <div class="onTv" :class="{ active: isActive }" @click="onTv">
+        <div class="onTv" :class="{ active: isActive }" @click="onToday">
           <h3 :class="{ switch_text_color: isSwitch }">Today</h3>
         </div>
         <div
           class="inTheaters"
           :class="{ active: !isActive }"
-          @click="inTheaters"
+          @click="onThisWeek"
         >
           <h3 :class="{ switch_text_color: !isSwitch }">This Week</h3>
         </div>
@@ -20,6 +21,10 @@
       :slides-per-view="9"
       @swiper="onSwiper"
       @slideChange="onSlideChange"
+      :autoplay="true"
+      :pagination="{ clickable: true }"
+      navigation
+      :options="swiperOption"
       :class="{
         fade_out: fade,
       }"
@@ -47,9 +52,15 @@
           ></h4>
         </div>
       </swiper-slide>
-      <swiper-slide class="slides" v-for="item in 10" :Key="item">
+      <!-- place holder slides -->
+      <swiper-slide
+        class="slides"
+        v-for="item in 10"
+        :Key="item"
+        v-show="!data.results"
+      >
         <svg
-          v-if="!data.results"
+          v-show="!data.results"
           role="img"
           width="400"
           height="460"
@@ -96,7 +107,7 @@
                   attributeName="offset"
                   values="0; 0; 3"
                   keyTimes="0; 0.25; 1"
-                  dur="2s"
+                  dur=".5s"
                   repeatCount="indefinite"
                 ></animate>
               </stop>
@@ -109,7 +120,11 @@
 </template>
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
+import SwiperCore, { Autoplay, Pagination, Navigation } from "swiper";
+SwiperCore.use([Autoplay, Pagination, Navigation]);
 import "swiper/swiper.scss";
+import "swiper/components/pagination/pagination.scss";
+import "swiper/components/navigation/navigation.scss";
 export default {
   components: {
     Swiper,
@@ -119,18 +134,21 @@ export default {
     return {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
-      onToday:
+      onTodayURl:
         "https://api.themoviedb.org/3/trending/all/day?api_key=37c26238f996be5bc2090ce0085ff210",
-      onWeek:
+      onThisWeekURL:
         "https://api.themoviedb.org/3/trending/all/week?api_key=37c26238f996be5bc2090ce0085ff210",
       isActive: true,
       isSwitch: true,
       fade: false,
       fade2: true,
+      swiperOption: {},
+      swiper: {},
     };
   },
   methods: {
     onSwiper(swiper) {
+      this.swiper = swiper;
       console.log(swiper);
     },
     onSlideChange() {
@@ -145,38 +163,41 @@ export default {
         console.error(err);
       }
     },
-    async onTv() {
+    onToday() {
       console.log("On TV");
+      this.swiper.slideTo(0, 0);
       if (!this.isActive && !this.isSwitch) {
+        console.log(this.swiper);
         this.fade = false;
         this.fade2 = false;
         this.isActive = true;
         this.isSwitch = true;
-        this.getData(this.onWeek);
+        this.getData(this.onTodayURl);
       }
     },
-    async inTheaters() {
+    onThisWeek() {
+      this.swiper.slideTo(0, 0);
       if (this.isActive && this.isSwitch) {
         this.fade = true;
         this.fade2 = true;
         this.isActive = false;
         this.isSwitch = false;
-        this.getData(this.onToday);
+        this.getData(this.onThisWeekURL);
       }
       console.log("inTheaters");
     },
   },
   created() {
-    this.getData(this.onWeek);
+    this.getData(this.onTodayURl);
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
-.trending{
-  margin-top: 120px;
+.hide {
+  display: none;
 }
+
 h1 {
   font-family: sans-serif;
   font-size: 26px;
@@ -185,18 +206,22 @@ h1 {
 .img {
   width: 150px;
   height: 220px;
-  border-radius: 10px;
+  border-radius: 20px;
+  padding: 8px;
 }
+
 .slides {
-  margin: 10px 20px;
   height: 354px;
+  width: auto;
 }
 
 .movie_description {
+  padding: 8px;
   font-size: 13px;
   font-weight: 700;
   font-size: 14px;
   margin-left: 4px;
+  width: 150px;
   h4 {
     margin-top: 3px;
     color: rgb(164, 164, 164);
@@ -266,10 +291,10 @@ h1 {
 }
 
 .fade_out {
-  animation: fadeIn ease-in-out 1s;
+  animation: fadeIn ease-in-out 1.1s;
 }
 .fade_out2 {
-  animation: fadeIn ease-in-out 2.5s;
+  animation: fadeIn ease-in-out 1.1s;
 }
 @keyframes fadeIn {
   0% {

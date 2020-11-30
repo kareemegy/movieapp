@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex ">
+    <div class="d-flex">
       <h1>What's popular</h1>
       <div class="switch">
         <div class="onTv" :class="{ active: isActive }" @click="onTv">
@@ -19,7 +19,11 @@
     <swiper
       class="swiper"
       ref="swiper"
+      :options="swiperOption"
       :slides-per-view="9"
+      :autoplay="true"
+      navigation
+      :pagination="{ clickable: true }"
       @swiper="onSwiper"
       @slideChange="onSlideChange"
       :class="{
@@ -28,17 +32,22 @@
     >
       <swiper-slide
         class="slides"
-        :class="{ fade_out: !fade2, fade_out2: data.results }"
+        :class="{
+          fade_out: !fade2,
+          fade_out2: data.results,
+          hide: !data.results,
+        }"
+        Pagination
         v-for="movie in data.results"
         :key="movie.id"
       >
         <img
-          class="img "
+          class="img"
           :src="baseImageURL + movie.poster_path"
           alt="movie image"
         />
 
-        <div class="movie_description " v-if="data.results">
+        <div class="movie_description">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
           <h4
             v-text="
@@ -49,7 +58,7 @@
           ></h4>
         </div>
       </swiper-slide>
-
+      <!-- place holder slides -->
       <swiper-slide
         class="slides"
         v-for="item in 10"
@@ -57,7 +66,7 @@
         v-show="!data.results"
       >
         <svg
-          v-if="!data.results"
+          v-show="!data.results"
           role="img"
           width="400"
           height="460"
@@ -104,7 +113,7 @@
                   attributeName="offset"
                   values="0; 0; 3"
                   keyTimes="0; 0.25; 1"
-                  dur="2s"
+                  dur=".5s"
                   repeatCount="indefinite"
                 ></animate>
               </stop>
@@ -117,6 +126,12 @@
 </template>
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
+import SwiperCore, { Autoplay, Pagination, Navigation } from "swiper";
+SwiperCore.use([Autoplay, Pagination, Navigation]);
+import "swiper/swiper.scss";
+import "swiper/components/pagination/pagination.scss";
+import "swiper/components/navigation/navigation.scss";
+
 export default {
   components: {
     Swiper,
@@ -134,14 +149,20 @@ export default {
       isSwitch: true,
       fade: false,
       fade2: true,
+      swiperOption: { autoplay: true },
+      swiper: {},
+      isImgsLoaded: false,
     };
   },
   methods: {
     onSwiper(swiper) {
-      console.log(swiper);
+      this.swiper = swiper;
     },
     onSlideChange() {
-      // console.log("slide change");
+      // console.log(swiper.activeIndex);
+    },
+    imgLoad() {
+      this.isImgsLoaded = true;
     },
     async getData(URL) {
       try {
@@ -152,9 +173,11 @@ export default {
         console.error(err);
       }
     },
-    async onTv() {
+    onTv() {
       console.log("On TV");
+      this.swiper.slideTo(0, 0);
       if (!this.isActive && !this.isSwitch) {
+        console.log(this.swiper);
         this.fade = false;
         this.fade2 = false;
         this.isActive = true;
@@ -162,7 +185,8 @@ export default {
         this.getData(this.inTheatersURL);
       }
     },
-    async inTheaters() {
+    inTheaters() {
+      this.swiper.slideTo(0, 0);
       if (this.isActive && this.isSwitch) {
         this.fade = true;
         this.fade2 = true;
@@ -180,6 +204,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hide {
+  display: none;
+}
+
 h1 {
   font-family: sans-serif;
   font-size: 26px;
@@ -191,8 +219,10 @@ h1 {
   border-radius: 20px;
   padding: 8px;
 }
+
 .slides {
   height: 354px;
+  width: auto;
 }
 
 .movie_description {
@@ -201,6 +231,7 @@ h1 {
   font-weight: 700;
   font-size: 14px;
   margin-left: 4px;
+  width: 150px;
   h4 {
     margin-top: 3px;
     color: rgb(164, 164, 164);
@@ -270,10 +301,10 @@ h1 {
 }
 
 .fade_out {
-  animation: fadeIn ease-in-out 1s;
+  animation: fadeIn ease-in-out 1.1s;
 }
 .fade_out2 {
-  animation: fadeIn ease-in-out 2.5s;
+  animation: fadeIn ease-in-out 1.1s;
 }
 @keyframes fadeIn {
   0% {
