@@ -43,10 +43,8 @@ export default {};
 
 <style lang="scss" scoped>
 .footer {
+  margin-top: 50px;
   background: #032440;
-  // position: absolute;
-  // width: 100%;
-  // bottom: 0px;
   .container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);

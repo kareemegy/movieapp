@@ -2,6 +2,8 @@
   <div>
     <h1>i'm the details component :)</h1>
     <h1>{{ $route.params.id }}</h1>
+    <h1>{{ $route.params.type }}</h1>
+    <h1>{{ $route.params.name }}</h1>
   </div>
 </template>
 
@@ -9,4 +11,5 @@
 export default {};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

@@ -40,7 +40,15 @@
         v-for="movie in data.results"
         :key="movie.id"
       >
-        <router-link :to="`/details/${movie.id}`">
+        <router-link
+          :to="
+            `/details/${showType}/${movie.id}/${
+              movie.title
+                ? movie.title.replace(/ /g, '')
+                : movie.name.replace(/ /g, '')
+            }`
+          "
+        >
           <img
             class="img"
             :src="baseImageURL + movie.poster_path"
@@ -140,6 +148,7 @@ export default {
   data() {
     return {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
+      showType: "tv",
       data: {},
       onTvURl:
         "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
@@ -158,6 +167,7 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper;
     },
+
     onSlideChange() {
       // console.log(swiper.activeIndex);
     },
@@ -177,6 +187,7 @@ export default {
       console.log("On TV");
       this.swiper.slideTo(0, 0);
       if (!this.isActive && !this.isSwitch) {
+        this.showType = "tv";
         console.log(this.swiper);
         this.fade = false;
         this.fade2 = false;
@@ -188,6 +199,7 @@ export default {
     inTheaters() {
       this.swiper.slideTo(0, 0);
       if (this.isActive && this.isSwitch) {
+        this.showType = "movie";
         this.fade = true;
         this.fade2 = true;
         this.isActive = false;
