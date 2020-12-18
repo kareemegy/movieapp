@@ -1,8 +1,21 @@
 <template>
-  <div>
-    <h1>i'm the details component :)</h1>
-    <h1>{{ showID }}</h1>
-    <h1>{{ showType }}</h1>
+  <div class="full_contianer" v-if="data" :style="sliderBG">
+    <section class="container">
+      <img :src="`${baseImageURL}${data.poster_path}`" :alt="`${data.name}`" />
+      <div class="header_description">
+        <h1>{{ data.name }}</h1>
+        <h1>({{ firstAirDate.split("-")[0] }})</h1>
+        <ul class="genres" v-for="(type, index) in data.genres" :key="index">
+          <li>{{ type.name }}</li>
+        </ul>
+        <h1>{{ episodeRunTime }}M</h1>
+        <h1>{{ data.tagline }}</h1>
+        <h1>OverView</h1>
+        <h1>{{ data.overview }}</h1>
+        <h1>Creator</h1>
+        <h1>{{ createdBy }}</h1>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -17,6 +30,15 @@ export default {
       baseIViedoURL: " https://www.youtube.com/watch?v=",
       URL: "",
       data: {},
+      firstAirDate: "",
+      episodeRunTime: "",
+      createdBy: "",
+      sliderBG: {
+        backgroundImage: "",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center center",
+      },
     };
   },
 
@@ -26,7 +48,14 @@ export default {
         let response = await fetch(URL);
         let data = await response.json();
         this.data = data;
-        console.log(this.data.name);
+        this.firstAirDate = this.data.first_air_date;
+        this.episodeRunTime = this.data.episode_run_time[0];
+        this.createdBy = data.created_by[0].name;
+        this.sliderBG.backgroundImage = `linear-gradient(
+      to right,
+      rgba(3, 37, 65, 0.8) 0%,
+      rgba(3, 37, 65, 0) 100%
+    ),url(${this.baseImageURL}${data.backdrop_path})`;
       } catch (err) {
         console.error(err);
       }
@@ -41,4 +70,20 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.full_contianer {
+  width: 100%;
+}
+section {
+  display: grid;
+  margin-top: 50px;
+  li {
+    list-style: none;
+  }
+  grid-template-columns: 350px 1fr;
+  img {
+    border-radius: 10px;
+    height: 450px;
+  }
+}
+</style>
