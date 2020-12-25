@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <div class="container">
+    <div>
       <router-view />
     </div>
     <!-- <Footer /> -->
@@ -24,6 +24,13 @@ export default {
   padding: 0px;
   box-sizing: border-box;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+li{
+  list-style: none;
+}
+a{
+  text-decoration: none;
+  color:black;
 }
 .container {
   width: 1300px;
