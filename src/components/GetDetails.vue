@@ -22,7 +22,7 @@
         </div>
         <div class="movie_info">
           <h1 class="tag_line mb">{{ data.tagline }}</h1>
-          <h3 class="mb">OverView</h3>
+          <h3 class="mb-8">OverView</h3>
           <h4 class="mb">{{ data.overview }}</h4>
           <h3>Creator</h3>
           <h4>{{ createdBy }}</h4>
@@ -35,102 +35,11 @@
     <div class="col-1">
       <h2 class="section_h2">Series Cast</h2>
       <div class="section_cast_box">
-        <ul class="section_cast_box_crew_box">
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
-          </li>
-          <li>
-            <img
-              src="http://image.tmdb.org/t/p/w138_and_h175_face/lMqKPig7zBoGfou7wWf88sZEGHo.jpg"
-              alt="#"
-            />
-            <h4>Mark Harmon</h4>
-            <p>Leroy Jethro Gibbs</p>
+        <ul v-if="seriscast" class="section_cast_box_crew_box">
+          <li v-for="crew in seriscast.cast" :key="crew.credit_id">
+            <img :src="baseImageURL + crew.profile_path" :alt="crew.name" />
+            <h4>{{ crew.name }}</h4>
+            <p>{{ crew.character }}</p>
           </li>
         </ul>
       </div>
@@ -144,24 +53,28 @@
       </div>
       <h4>Facts</h4>
       <h4>Status</h4>
-      <p>Returning Series</p>
+      <p>{{ data.status }}</p>
       <h4>Network</h4>
-      <p>Fox</p>
+      <ul v-if="data.networks">
+        <li v-for="network in data.networks" :key="network.id">
+          <img class="network_img" :src="baseImageURL + network.logo_path" />
+        </li>
+      </ul>
+
       <h4>Type</h4>
-      <p>Scripted</p>
+      <p>{{ data.type }}</p>
       <h4>Original Language</h4>
-      <p>English</p>
+      <ul class="langs" v-if="data.spoken_languages">
+        <li v-for="lang in data.spoken_languages" :key="lang.id">
+          {{ lang.name + "," }}
+        </li>
+      </ul>
       <div class="keywords">
         <h4>Keywords</h4>
         <ul>
-          <li>
-            <a href="https://www.themoviedb.org/keyword/3436-karate/tv">dojo</a>
+          <li v-for="keyword in keywords.results" :key="keyword.id">
+            <a href="#">{{ keyword.name }}</a>
           </li>
-          <li><a href="#">action</a></li>
-          <li><a href="#">drama</a></li>
-          <li><a href="#">drama</a></li>
-          <li><a href="#">drama</a></li>
-          <li><a href="#">drama</a></li>
         </ul>
       </div>
     </div>
@@ -178,7 +91,11 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: " https://www.youtube.com/watch?v=",
       URL: "",
+      URL2: "",
+      URL3: "",
       data: {},
+      seriscast: {},
+      keywords: {},
       firstAirDate: "",
       episodeRunTime: "",
       createdBy: "",
@@ -192,11 +109,23 @@ export default {
   },
 
   methods: {
-    async getData(URL) {
+    async getData(URL, URL2, URL3) {
       try {
         let response = await fetch(URL);
         let data = await response.json();
         this.data = data;
+        // console.log("here", this.data);
+
+        let response2 = await fetch(URL2);
+        let data2 = await response2.json();
+        this.seriscast = data2;
+        // console.log("here", this.seriscast);
+
+        let response3 = await fetch(URL3);
+        let data3 = await response3.json();
+        this.keywords = data3;
+        console.log("here", this.keywords);
+
         this.firstAirDate = this.data.first_air_date;
         this.episodeRunTime = this.data.episode_run_time[0];
         this.createdBy = data.created_by[0].name;
@@ -208,16 +137,17 @@ export default {
         console.error(err);
       }
     },
-
     getBackDropColor() {},
   },
   created() {
     this.showID = this.$route.params.id;
     this.showType = this.$route.params.type;
     this.URL = `https://api.themoviedb.org/3/${this.showType}/${this.showID}?api_key=${this.api_key}`;
-    this.getData(this.URL);
+    this.URL2 = `http://api.themoviedb.org/3/tv/${this.showID}/credits?api_key=${this.api_key}`;
+    this.URL3 = `https://api.themoviedb.org/3/${this.showType}/${this.showID}/keywords?api_key=${this.api_key}`;
+
+    this.getData(this.URL, this.URL2, this.URL3);
   },
-  mounted() {},
 };
 </script>
 
@@ -230,6 +160,9 @@ export default {
 }
 .mb {
   margin-bottom: 30px;
+}
+.mb-8{
+  margin-bottom: 8px;
 }
 .mt {
   margin-top: 10px;
@@ -282,10 +215,7 @@ export default {
       font-style: italic;
       opacity: 0.7;
     }
-    &:nth-child(2) {
-      font-size: 16px;
-      color: red;
-    }
+ 
   }
   .layer {
     position: absolute;
@@ -332,9 +262,9 @@ export default {
         }
 
         img {
-          width: 100%;
           border-top-left-radius: 15px;
           border-top-right-radius: 15px;
+          height: 190px;
         }
         h4 {
           margin: 5px 0px 5px 0px;
@@ -362,8 +292,16 @@ export default {
         }
       }
     }
+    .network_img {
+      width: 20%;
+      // height: 60%;
+    }
+    .langs {
+      display: flex;
+      flex-wrap: wrap;
+    }
     .keywords {
-      h4{
+      h4 {
         margin-bottom: 8px;
       }
       ul {
