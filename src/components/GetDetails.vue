@@ -1,42 +1,50 @@
 <template>
-  <div class="full_contianer" v-if="data" :style="sliderBG">
+  <div class="full_contianer" v-if="data[0]" :style="sliderBG">
     <div class="layer"></div>
     <section class="container">
       <img
         ref="myImg"
-        :src="`${baseImageURL}${data.poster_path}`"
-        :alt="`${data.name}`"
+        :src="`${baseImageURL}${data[0].poster_path}`"
+        :alt="`${data[0].name}`"
       />
       <div class="show_description">
         <div class="show_description_title flex">
-          <h1>{{ data.name }}</h1>
-          <p>({{ firstAirDate.split("-")[0] }})</p>
+          <!-- for movies  -->
+          <h1 v-if="data[0].name">{{ data[0].name }}</h1>
+          <!-- for In Theaters  -->
+          <h1 v-else>{{ data[0].original_title }}</h1>
+          <!-- for movies  -->
+          <p v-if="data[0].first_air_date">
+            ({{ data[0].first_air_date.split("-")[0] }})
+          </p>
+          <!--  for In Theaters  -->
+          <p v-else>({{ data[0].release_date.split("-")[0] }})</p>
         </div>
         <div class="show_description_type flex mb">
           <ul class="genres flex">
-            <li v-for="(type, index) in data.genres" :key="index">
+            <li v-for="(type, index) in data[0].genres" :key="index">
               {{ type.name }},
             </li>
           </ul>
-          <h4>. {{ episodeRunTime }}M</h4>
+          <h4>. {{ data[0].episode_run_time[0] }}M</h4>
         </div>
         <div class="movie_info">
-          <h1 class="tag_line mb">{{ data.tagline }}</h1>
+          <h1 class="tag_line mb">{{ data[0].tagline }}</h1>
           <h3 class="mb-8">OverView</h3>
-          <h4 class="mb">{{ data.overview }}</h4>
+          <h4 class="mb">{{ data[0].overview }}</h4>
           <h3>Creator</h3>
-          <h4>{{ createdBy }}</h4>
+          <h4>{{ data[0].created_by[0].name }}</h4>
         </div>
       </div>
     </section>
   </div>
   <!-- Series Cast -->
-  <section class="container series_cast">
+  <section v-if="data[1]" class="container series_cast">
     <div class="col-1">
       <h2 class="section_h2">Series Cast</h2>
       <div class="section_cast_box">
-        <ul v-if="seriscast" class="section_cast_box_crew_box">
-          <li v-for="crew in seriscast.cast" :key="crew.credit_id">
+        <ul class="section_cast_box_crew_box">
+          <li v-for="crew in data[1].cast" :key="crew.credit_id">
             <img :src="baseImageURL + crew.profile_path" :alt="crew.name" />
             <h4>{{ crew.name }}</h4>
             <p>{{ crew.character }}</p>
@@ -44,7 +52,7 @@
         </ul>
       </div>
     </div>
-    <div class="col-2">
+    <div v-if="data[0]" class="col-2">
       <div class="social_icons">
         <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
         <a href="#"><img src="../assets/instagram.png" alt="instagramicon"/></a>
@@ -53,30 +61,31 @@
       </div>
       <h4>Facts</h4>
       <h4>Status</h4>
-      <p>{{ data.status }}</p>
+      <p>{{ data[0].status }}</p>
       <h4>Network</h4>
-      <ul v-if="data.networks">
-        <li v-for="network in data.networks" :key="network.id">
+      <ul>
+        <li v-for="network in data[0].networks" :key="network.id">
           <img class="network_img" :src="baseImageURL + network.logo_path" />
         </li>
       </ul>
 
       <h4>Type</h4>
-      <p>{{ data.type }}</p>
+      <p>{{ data[0].type }}</p>
       <h4>Original Language</h4>
-      <ul class="langs" v-if="data.spoken_languages">
-        <li v-for="lang in data.spoken_languages" :key="lang.id">
+      <ul class="langs" v-if="data[0].spoken_languages">
+        <li v-for="lang in data[0].spoken_languages" :key="lang.id">
           {{ lang.name + "," }}
         </li>
       </ul>
-      <div class="keywords">
+      <div v-if="data[2]" class="keywords">
         <h4>Keywords</h4>
         <ul>
-          <li v-for="keyword in keywords.results" :key="keyword.id">
+          <li v-for="keyword in data[2].results" :key="keyword.id">
             <a href="#">{{ keyword.name }}</a>
           </li>
         </ul>
       </div>
+      <!-- {{process.env.VUE_APP_FOO}} -->
     </div>
   </section>
 </template>
@@ -90,15 +99,7 @@ export default {
       api_key: "37c26238f996be5bc2090ce0085ff210&language=en-US",
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: " https://www.youtube.com/watch?v=",
-      URL: "",
-      URL2: "",
-      URL3: "",
       data: {},
-      seriscast: {},
-      keywords: {},
-      firstAirDate: "",
-      episodeRunTime: "",
-      createdBy: "",
       sliderBG: {
         backgroundImage: "",
         backgroundSize: "cover",
@@ -109,45 +110,38 @@ export default {
   },
 
   methods: {
-    async getData(URL, URL2, URL3) {
+    async getData(showsURL, seriescastURL, keywordsURL) {
       try {
-        let response = await fetch(URL);
-        let data = await response.json();
-        this.data = data;
-        // console.log("here", this.data);
+        let urls = [showsURL, seriescastURL, keywordsURL];
 
-        let response2 = await fetch(URL2);
-        let data2 = await response2.json();
-        this.seriscast = data2;
-        // console.log("here", this.seriscast);
-
-        let response3 = await fetch(URL3);
-        let data3 = await response3.json();
-        this.keywords = data3;
-        console.log("here", this.keywords);
-
-        this.firstAirDate = this.data.first_air_date;
-        this.episodeRunTime = this.data.episode_run_time[0];
-        this.createdBy = data.created_by[0].name;
-        this.sliderBG.backgroundImage = `
-        url(${this.baseImageURL}${data.backdrop_path})`;
-
-        // this.getBackDropColor();
-      } catch (err) {
-        console.error(err);
+        Promise.all(
+          urls.map((url) => fetch(url).then((res) => res.json()))
+        ).then((data) => {
+          this.data = data;
+          this.sliderBG.backgroundImage = `
+              url(${this.baseImageURL}${data[0].backdrop_path})`;
+          console.log(this.data);
+        });
+      } catch (error) {
+        console.error(error);
       }
     },
-    getBackDropColor() {},
+    getBackDropColor() {
+      
+    },
   },
   created() {
     this.showID = this.$route.params.id;
     this.showType = this.$route.params.type;
-    this.URL = `https://api.themoviedb.org/3/${this.showType}/${this.showID}?api_key=${this.api_key}`;
-    this.URL2 = `http://api.themoviedb.org/3/tv/${this.showID}/credits?api_key=${this.api_key}`;
-    this.URL3 = `https://api.themoviedb.org/3/${this.showType}/${this.showID}/keywords?api_key=${this.api_key}`;
-
-    this.getData(this.URL, this.URL2, this.URL3);
+    let URLS = [
+      `https://api.themoviedb.org/3/${this.showType}/${this.showID}?api_key=${this.api_key}`,
+      `http://api.themoviedb.org/3/tv/${this.showID}/credits?api_key=${this.api_key}`,
+      `https://api.themoviedb.org/3/${this.showType}/${this.showID}/keywords?api_key=${this.api_key}`,
+    ];
+    this.getData(...URLS);
   },
+  mounted(){
+  }
 };
 </script>
 
@@ -161,7 +155,7 @@ export default {
 .mb {
   margin-bottom: 30px;
 }
-.mb-8{
+.mb-8 {
   margin-bottom: 8px;
 }
 .mt {
@@ -215,7 +209,6 @@ export default {
       font-style: italic;
       opacity: 0.7;
     }
- 
   }
   .layer {
     position: absolute;
