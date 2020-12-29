@@ -35,11 +35,21 @@
         v-for="movie in data.results"
         :key="movie.id"
       >
-        <img
-          class="img "
-          :src="baseImageURL + movie.poster_path"
-          alt="movie image"
-        />
+        <router-link
+          :to="
+            `/details/${showType}/${movie.id}/${
+              movie.title
+                ? movie.title.replace(/ /g, '')
+                : movie.name.replace(/ /g, '')
+            }`
+          "
+        >
+          <img
+            class="img"
+            :src="baseImageURL + movie.poster_path"
+            alt="movie image"
+          />
+        </router-link>
 
         <div class="movie_description " v-if="data.results">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
@@ -134,6 +144,8 @@ export default {
     return {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
+      showType: "tv",
+
       onTodayURl:
         "https://api.themoviedb.org/3/trending/all/day?api_key=37c26238f996be5bc2090ce0085ff210",
       onThisWeekURL:
@@ -167,6 +179,8 @@ export default {
       console.log("On TV");
       this.swiper.slideTo(0, 0);
       if (!this.isActive && !this.isSwitch) {
+        this.showType = "tv";
+
         console.log(this.swiper);
         this.fade = false;
         this.fade2 = false;
@@ -178,6 +192,8 @@ export default {
     onThisWeek() {
       this.swiper.slideTo(0, 0);
       if (this.isActive && this.isSwitch) {
+        this.showType = "movie";
+
         this.fade = true;
         this.fade2 = true;
         this.isActive = false;

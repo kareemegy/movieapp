@@ -20,20 +20,22 @@
           <!--  for In Theaters  -->
           <p v-else>({{ data[0].release_date.split("-")[0] }})</p>
         </div>
-        <div class="show_description_type flex mb">
+
+        <div v-if="data[0]" class="show_description_type flex mb">
           <ul class="genres flex">
-            <li v-for="(type, index) in data[0].genres" :key="index">
+            <li v-for="type in data[0].genres" :key="type.id">
               {{ type.name }},
             </li>
           </ul>
-          <h4>. {{ data[0].episode_run_time[0] }}M</h4>
+          <!-- <h4>. {{ data[0].episode_run_time[0] }}M</h4> -->
         </div>
+
         <div class="movie_info">
           <h1 class="tag_line mb">{{ data[0].tagline }}</h1>
           <h3 class="mb-8">OverView</h3>
           <h4 class="mb">{{ data[0].overview }}</h4>
           <h3>Creator</h3>
-          <h4>{{ data[0].created_by[0].name }}</h4>
+          <!-- <h4>{{ data[0].created_by[0].name }}</h4> -->
         </div>
       </div>
     </section>
@@ -44,14 +46,26 @@
       <h2 class="section_h2">Series Cast</h2>
       <div class="section_cast_box">
         <ul class="section_cast_box_crew_box">
-          <li v-for="crew in data[1].cast" :key="crew.credit_id">
-            <img :src="baseImageURL + crew.profile_path" :alt="crew.name" />
+          <li
+            v-for="(crew, i) in data[1].cast.slice(0, 6)"
+            :key="crew.credit_id"
+          >
+            <img
+              :src="
+                seriesCastLoadedImage(
+                  baseImageURL + crew.profile_path,
+                  data[1].cast[i]
+                )
+              "
+              :alt="crew.name"
+            />
             <h4>{{ crew.name }}</h4>
             <p>{{ crew.character }}</p>
           </li>
         </ul>
       </div>
     </div>
+    <!-- show general ifo -->
     <div v-if="data[0]" class="col-2">
       <div class="social_icons">
         <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
@@ -62,30 +76,51 @@
       <h4>Facts</h4>
       <h4>Status</h4>
       <p>{{ data[0].status }}</p>
-      <h4>Network</h4>
-      <ul>
-        <li v-for="network in data[0].networks" :key="network.id">
-          <img class="network_img" :src="baseImageURL + network.logo_path" />
-        </li>
-      </ul>
-
-      <h4>Type</h4>
-      <p>{{ data[0].type }}</p>
-      <h4>Original Language</h4>
-      <ul class="langs" v-if="data[0].spoken_languages">
-        <li v-for="lang in data[0].spoken_languages" :key="lang.id">
-          {{ lang.name + "," }}
-        </li>
-      </ul>
-      <div v-if="data[2]" class="keywords">
-        <h4>Keywords</h4>
+      <div v-if="data[0].networks">
+        <h4>Network</h4>
         <ul>
+          <li v-for="network in data[0].networks" :key="network.id">
+            <img class="network_img" :src="baseImageURL + network.logo_path" />
+          </li>
+        </ul>
+      </div>
+      <div v-if="data[0].type">
+        <h4>Type</h4>
+        <p>{{ data[0].type }}</p>
+      </div>
+      <div v-if="data[0].budget">
+        <h4>Budget</h4>
+        <p>${{ data[0].budget }}</p>
+      </div>
+
+      <div v-if="data[0].revenue">
+        <h4>Revenue</h4>
+        <p>${{ data[0].revenue }}</p>
+      </div>
+      <div>
+        <h4 v-if="data[0].spoken_languages">Original Language</h4>
+        <ul class="langs">
+          <li v-for="lang in data[0].spoken_languages" :key="lang.id">
+            {{ lang.name + "," }}
+          </li>
+        </ul>
+      </div>
+      <!-- keywords -->
+      <div v-if="data[2]" class="keywords">
+        <h4 v-if="data[2].results || data[2].keywords">
+          Keywords
+        </h4>
+        <ul v-if="data[2].results">
           <li v-for="keyword in data[2].results" :key="keyword.id">
             <a href="#">{{ keyword.name }}</a>
           </li>
         </ul>
+        <ul v-if="data[2].keywords">
+          <li v-for="keyword in data[2].keywords" :key="keyword.id">
+            <a href="#">{{ keyword.name }}</a>
+          </li>
+        </ul>
       </div>
-      <!-- {{process.env.VUE_APP_FOO}} -->
     </div>
   </section>
 </template>
@@ -96,10 +131,10 @@ export default {
     return {
       showID: 0,
       showType: "",
-      api_key: "37c26238f996be5bc2090ce0085ff210&language=en-US",
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: " https://www.youtube.com/watch?v=",
       data: {},
+      isSeriesCastLoaded: true,
       sliderBG: {
         backgroundImage: "",
         backgroundSize: "cover",
@@ -126,22 +161,33 @@ export default {
         console.error(error);
       }
     },
-    getBackDropColor() {
-      
+    getBackDropColor() {},
+    seriesCastLoadedImage(image_url, gender) {
+      if (gender.profile_path) {
+        return image_url;
+      }
+      if (!gender.profile_path) {
+        if (gender.gender == 1) {
+          return "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-4-user-grey-d8fe957375e70239d6abdd549fd7568c89281b2179b5f4470e2e12895792dfa5.svg";
+        } else {
+          return "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-36-user-female-grey-d9222f16ec16a33ed5e2c9bbdca07a4c48db14008bbebbabced8f8ed1fa2ad59.svg";
+        }
+      }
     },
   },
   created() {
     this.showID = this.$route.params.id;
     this.showType = this.$route.params.type;
     let URLS = [
-      `https://api.themoviedb.org/3/${this.showType}/${this.showID}?api_key=${this.api_key}`,
-      `http://api.themoviedb.org/3/tv/${this.showID}/credits?api_key=${this.api_key}`,
-      `https://api.themoviedb.org/3/${this.showType}/${this.showID}/keywords?api_key=${this.api_key}`,
+      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}?api_key=${process.env.VUE_APP_API_KEY}`,
+      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}/credits?api_key=${process.env.VUE_APP_API_KEY}`,
+      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}/keywords?api_key=${process.env.VUE_APP_API_KEY}`,
     ];
     this.getData(...URLS);
   },
-  mounted(){
-  }
+  mounted() {
+    console.log("herere=>", process.env.VUE_APP_API_ROOT_URL);
+  },
 };
 </script>
 
@@ -244,20 +290,19 @@ export default {
         width: 400px; // set it to any width(no-effect) but not 100%
         height: 300px;
         & li {
+          white-space: break-spaces;
           display: flex;
           flex-direction: column;
           margin: 5px;
-          height: 280px;
-          width: 280px;
           border-radius: 15px;
           box-shadow: 0 4px 8px 0 #ccc;
           padding: 5px;
         }
-
         img {
           border-top-left-radius: 15px;
           border-top-right-radius: 15px;
           height: 190px;
+          width: 150px;
         }
         h4 {
           margin: 5px 0px 5px 0px;
