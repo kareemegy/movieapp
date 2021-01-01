@@ -1,12 +1,15 @@
 <template>
   <div class="full_contianer" v-if="data[0]" :style="sliderBG">
-    <div class="layer"></div>
+    <div :style="layer"></div>
     <section class="container">
       <img
+        crossorigin="anonymous"
         ref="myImg"
         :src="`${baseImageURL}${data[0].poster_path}`"
         :alt="`${data[0].name}`"
+        @load="getBackDropColor()"
       />
+      <!-- <img v-show="false" :src="`${baseImageURL}${data[0].backdrop_path}`" /> -->
       <div class="show_description">
         <div class="show_description_title flex">
           <!-- for movies  -->
@@ -64,6 +67,7 @@
           </li>
         </ul>
       </div>
+      <Recommendations :showId="Number(showID)" :showType="showType" />
     </div>
     <!-- show general ifo -->
     <div v-if="data[0]" class="col-2">
@@ -126,7 +130,12 @@
 </template>
 
 <script>
+import Recommendations from "@/components/Recommendations.vue";
+import ColorThief from "colorthief";
 export default {
+  components: {
+    Recommendations,
+  },
   data() {
     return {
       showID: 0,
@@ -140,6 +149,14 @@ export default {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: " right -200px top",
+      },
+      layer: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        backgroundImage: "",
       },
     };
   },
@@ -161,7 +178,19 @@ export default {
         console.error(error);
       }
     },
-    getBackDropColor() {},
+    getBackDropColor() {
+      const colorThief = new ColorThief();
+      const img = this.$refs.myImg;
+      const result = colorThief.getColor(img);
+
+      this.layer.backgroundImage = `linear-gradient(
+     to right,
+      rgba(${result[0]}, ${result[1]},${result[2]}, 1.00) 150px,
+      rgba(${result[0]}, ${result[1]},${result[2]}, 0.78) 100%
+    )`;
+      console.log(result);
+    },
+
     seriesCastLoadedImage(image_url, gender) {
       if (gender.profile_path) {
         return image_url;
@@ -185,9 +214,7 @@ export default {
     ];
     this.getData(...URLS);
   },
-  mounted() {
-    console.log("herere=>", process.env.VUE_APP_API_ROOT_URL);
-  },
+
 };
 </script>
 
@@ -256,18 +283,18 @@ export default {
       opacity: 0.7;
     }
   }
-  .layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(
-      to right,
-      rgba(3.53%, 7.45%, 12.94%, 1) 150px,
-      rgba(3.53%, 7.45%, 12.94%, 0.84) 100%
-    );
-  }
+  // .layer {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 100%;
+  //   background-image: linear-gradient(
+  //     to right,
+  //     rgba(3.53%, 7.45%, 12.94%, 1) 150px,
+  //     rgba(3.53%, 7.45%, 12.94%, 0.84) 100%
+  //   );
+  // }
 }
 
 // Series Cast
@@ -331,7 +358,7 @@ export default {
       }
     }
     .network_img {
-      width: 20%;
+      width: 40%;
       // height: 60%;
     }
     .langs {

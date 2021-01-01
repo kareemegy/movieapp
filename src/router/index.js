@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
 import GetDetails from "@/components/GetDetails.vue";
 import NotFound from "@/components/NotFound.vue";
-import test from "@/components/test.vue";
 const routes = [
   {
     path: "/",
@@ -15,11 +14,7 @@ const routes = [
     name: "Details",
     component: GetDetails,
   },
-  {
-    path: "/test",
-    name: "test",
-    component: test,
-  },
+
   {
     path: "/:catchAll(.*)",
     component: NotFound,
@@ -29,9 +24,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior() {
-    return { x: 0, y: 0 };
-  },
+  scrollBehavior: () => ({ y: 0 }),
 });
 
 export default router;
