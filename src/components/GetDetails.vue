@@ -1,63 +1,60 @@
 <template>
-  <div class="full_contianer" v-if="data[0]" :style="sliderBG">
+  <div class="full_contianer" v-if="data" :style="sliderBG">
     <div :style="layer"></div>
     <section class="container">
       <img
         crossorigin="anonymous"
         ref="myImg"
-        :src="`${baseImageURL}${data[0].poster_path}`"
-        :alt="`${data[0].name}`"
+        :src="`${baseImageURL}${data.poster_path}`"
+        :alt="`${data.name}`"
         @load="getBackDropColor()"
       />
-      <!-- <img v-show="false" :src="`${baseImageURL}${data[0].backdrop_path}`" /> -->
       <div class="show_description">
         <div class="show_description_title flex">
           <!-- for movies  -->
-          <h1 v-if="data[0].name">{{ data[0].name }}</h1>
+          <h1 v-if="data.name">{{ data.name }}</h1>
           <!-- for In Theaters  -->
-          <h1 v-else>{{ data[0].original_title }}</h1>
+          <h1 v-else>{{ data.original_title }}</h1>
           <!-- for movies  -->
-          <p v-if="data[0].first_air_date">
-            ({{ data[0].first_air_date.split("-")[0] }})
-          </p>
+          <p v-if="data.first_air_date">{{first_air_date}}</p>
           <!--  for In Theaters  -->
-          <p v-else>({{ data[0].release_date.split("-")[0] }})</p>
+          <p v-if="data.release_date">({{ release_date }})</p>
         </div>
 
-        <div v-if="data[0]" class="show_description_type flex mb">
+        <div v-if="data" class="show_description_type flex mb">
           <ul class="genres flex">
-            <li v-for="type in data[0].genres" :key="type.id">
-              {{ type.name }},
-            </li>
+            <li v-for="type in data.genres" :key="type.id">{{ type.name }},</li>
           </ul>
-          <!-- <h4>. {{ data[0].episode_run_time[0] }}M</h4> -->
+          <h4 v-if="data.episode_run_time">. {{ data.episode_run_time[0] }}M</h4>
         </div>
 
         <div class="movie_info">
-          <h1 class="tag_line mb">{{ data[0].tagline }}</h1>
+          <h1 class="tag_line mb">{{ data.tagline }}</h1>
           <h3 class="mb-8">OverView</h3>
-          <h4 class="mb">{{ data[0].overview }}</h4>
-          <h3>Creator</h3>
-          <!-- <h4>{{ data[0].created_by[0].name }}</h4> -->
+          <h4 class="mb">{{ data.overview }}</h4>
+          <div v-if="data.created_by">
+            <h3>{{ data.created_by[0] ? "Creator" : "" }}</h3>
+            <h4>{{ data.created_by[0] ? data.created_by[0].name : "" }}</h4>
+          </div>
         </div>
       </div>
     </section>
   </div>
   <!-- Series Cast -->
-  <section v-if="data[1]" class="container series_cast">
-    <div class="col-1">
+  <section class="container series_cast">
+    <div v-if="data.credits" class="col-1">
       <h2 class="section_h2">Series Cast</h2>
       <div class="section_cast_box">
         <ul class="section_cast_box_crew_box">
           <li
-            v-for="(crew, i) in data[1].cast.slice(0, 6)"
+            v-for="(crew, i) in data.credits.cast.slice(0, 6)"
             :key="crew.credit_id"
           >
             <img
               :src="
                 seriesCastLoadedImage(
                   baseImageURL + crew.profile_path,
-                  data[1].cast[i]
+                  data.credits.cast[i]
                 )
               "
               :alt="crew.name"
@@ -70,7 +67,7 @@
       <Recommendations :showId="Number(showID)" :showType="showType" />
     </div>
     <!-- show general ifo -->
-    <div v-if="data[0]" class="col-2">
+    <div v-if="data" class="col-2">
       <div class="social_icons">
         <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
         <a href="#"><img src="../assets/instagram.png" alt="instagramicon"/></a>
@@ -79,48 +76,48 @@
       </div>
       <h4>Facts</h4>
       <h4>Status</h4>
-      <p>{{ data[0].status }}</p>
-      <div v-if="data[0].networks">
+      <p>{{ data.status }}</p>
+      <div v-if="data.networks">
         <h4>Network</h4>
         <ul>
-          <li v-for="network in data[0].networks" :key="network.id">
+          <li v-for="network in data.networks" :key="network.id">
             <img class="network_img" :src="baseImageURL + network.logo_path" />
           </li>
         </ul>
       </div>
-      <div v-if="data[0].type">
+      <div v-if="data.type">
         <h4>Type</h4>
-        <p>{{ data[0].type }}</p>
+        <p>{{ data.type }}</p>
       </div>
-      <div v-if="data[0].budget">
+      <div v-if="data.budget">
         <h4>Budget</h4>
-        <p>${{ data[0].budget }}</p>
+        <p>${{ data.budget }}</p>
       </div>
 
-      <div v-if="data[0].revenue">
+      <div v-if="data.revenue">
         <h4>Revenue</h4>
-        <p>${{ data[0].revenue }}</p>
+        <p>${{ data.revenue }}</p>
       </div>
       <div>
-        <h4 v-if="data[0].spoken_languages">Original Language</h4>
+        <h4 v-if="data.spoken_languages">Original Language</h4>
         <ul class="langs">
-          <li v-for="lang in data[0].spoken_languages" :key="lang.id">
+          <li v-for="lang in data.spoken_languages" :key="lang.id">
             {{ lang.name + "," }}
           </li>
         </ul>
       </div>
       <!-- keywords -->
-      <div v-if="data[2]" class="keywords">
-        <h4 v-if="data[2].results || data[2].keywords">
+      <div v-if="data" class="keywords">
+        <h4 v-if="data.results || data.keywords">
           Keywords
         </h4>
-        <ul v-if="data[2].results">
-          <li v-for="keyword in data[2].results" :key="keyword.id">
+        <ul v-if="data.results">
+          <li v-for="keyword in data.results" :key="keyword.id">
             <a href="#">{{ keyword.name }}</a>
           </li>
         </ul>
-        <ul v-if="data[2].keywords">
-          <li v-for="keyword in data[2].keywords" :key="keyword.id">
+        <ul v-if="data.keywords">
+          <li v-for="keyword in data.keywords" :key="keyword.id">
             <a href="#">{{ keyword.name }}</a>
           </li>
         </ul>
@@ -132,6 +129,7 @@
 <script>
 import Recommendations from "@/components/Recommendations.vue";
 import ColorThief from "colorthief";
+import axios from "axios";
 export default {
   components: {
     Recommendations,
@@ -143,7 +141,6 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: " https://www.youtube.com/watch?v=",
       data: {},
-      isSeriesCastLoaded: true,
       sliderBG: {
         backgroundImage: "",
         backgroundSize: "cover",
@@ -162,21 +159,17 @@ export default {
   },
 
   methods: {
-    async getData(showsURL, seriescastURL, keywordsURL) {
-      try {
-        let urls = [showsURL, seriescastURL, keywordsURL];
-
-        Promise.all(
-          urls.map((url) => fetch(url).then((res) => res.json()))
-        ).then((data) => {
+     getData(URL) {
+      axios
+        .get(URL)
+        .then(({ data }) => {
           this.data = data;
-          this.sliderBG.backgroundImage = `
-              url(${this.baseImageURL}${data[0].backdrop_path})`;
-          console.log(this.data);
+          this.sliderBG.backgroundImage = `url(${this.baseImageURL}${data.backdrop_path})`;
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      } catch (error) {
-        console.error(error);
-      }
     },
     getBackDropColor() {
       const colorThief = new ColorThief();
@@ -207,14 +200,20 @@ export default {
   created() {
     this.showID = this.$route.params.id;
     this.showType = this.$route.params.type;
-    let URLS = [
-      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}?api_key=${process.env.VUE_APP_API_KEY}`,
-      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}/credits?api_key=${process.env.VUE_APP_API_KEY}`,
-      `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}/keywords?api_key=${process.env.VUE_APP_API_KEY}`,
-    ];
-    this.getData(...URLS);
+    let appendToResponse = "&append_to_response=videos,images,credits"; // add endpoints to get more data from the request
+    let URL = `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}
+    ?api_key=${process.env.VUE_APP_API_KEY}${appendToResponse}`;
+    this.getData(URL);
+   
   },
-
+  computed: {
+    release_date() {
+      return this.data.release_date.split("-")[0];
+    },
+    first_air_date() {
+      return this.data.first_air_date.split("-")[0];
+    },
+  },
 };
 </script>
 
@@ -283,18 +282,6 @@ export default {
       opacity: 0.7;
     }
   }
-  // .layer {
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   height: 100%;
-  //   background-image: linear-gradient(
-  //     to right,
-  //     rgba(3.53%, 7.45%, 12.94%, 1) 150px,
-  //     rgba(3.53%, 7.45%, 12.94%, 0.84) 100%
-  //   );
-  // }
 }
 
 // Series Cast

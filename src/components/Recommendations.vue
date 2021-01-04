@@ -1,10 +1,10 @@
 <template>
-  <div class="list_scroll">
+  <div class="list_scroll" v-if="recommendationData">
     <h3>Recommendations</h3>
-    <ul v-if="recommendationData">
+    <ul v-if="recommendationData.name">
       <li v-for="recommendation in recommendationData" :key="recommendation.id">
         <router-link
-        @click="redirect()"
+          @click="redirect()"
           :to="
             `/details/${showType}/${
               recommendation.id
@@ -47,13 +47,13 @@ export default {
         .get(
           `https://api.themoviedb.org/3/${this.showType}/${this.showId}/recommendations?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
         )
-        .then(({data}) => {
+        .then(({ data }) => {
           return (this.recommendationData = data.results);
         });
     },
-    redirect(){
+    redirect() {
       console.log("worked");
-    }
+    },
   },
   created() {
     this.getData();
@@ -63,7 +63,6 @@ export default {
       console.log(newVal, oldVal);
     },
   },
-
 };
 </script>
 
