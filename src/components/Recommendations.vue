@@ -1,7 +1,7 @@
 <template>
   <div class="list_scroll" v-if="recommendationData">
     <h3>Recommendations</h3>
-    <ul v-if="recommendationData.name">
+    <ul>
       <li v-for="recommendation in recommendationData" :key="recommendation.id">
         <router-link
           @click="redirect()"
@@ -69,6 +69,7 @@ export default {
 <style lang="scss" scoped>
 .list_scroll {
   margin-top: 40px;
+  margin-bottom: 100px;
   h3 {
     margin-left: 8px;
   }
@@ -83,7 +84,7 @@ export default {
       img {
         border-radius: 20px;
         width: 280px;
-        height: 150px;
+        height: 244px;
       }
     }
   }

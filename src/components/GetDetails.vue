@@ -16,7 +16,7 @@
           <!-- for In Theaters  -->
           <h1 v-else>{{ data.original_title }}</h1>
           <!-- for movies  -->
-          <p v-if="data.first_air_date">{{first_air_date}}</p>
+          <p v-if="data.first_air_date">{{ first_air_date }}</p>
           <!--  for In Theaters  -->
           <p v-if="data.release_date">({{ release_date }})</p>
         </div>
@@ -25,7 +25,9 @@
           <ul class="genres flex">
             <li v-for="type in data.genres" :key="type.id">{{ type.name }},</li>
           </ul>
-          <h4 v-if="data.episode_run_time">. {{ data.episode_run_time[0] }}M</h4>
+          <h4 v-if="data.episode_run_time">
+            . {{ data.episode_run_time[0] }}M
+          </h4>
         </div>
 
         <div class="movie_info">
@@ -63,6 +65,23 @@
             <p>{{ crew.character }}</p>
           </li>
         </ul>
+      </div>
+      <div class="media">
+        <div class="col-1">
+          <h3>Media</h3>
+          <ul>
+            <li class="active_li" @click="getMedia($event,'backdrops')">Backdrops</li>
+            <li @click="getMedia($event,'posters')">Posters</li>
+            <li @click="getMedia($event,'videos')">Videos</li>
+          </ul>
+        </div>
+        <div class="media_content">
+          <ul>
+            <li v-for="(image, i) in mediaData" :key="i">
+              <img :src="baseImageURL + image.file_path" alt="" srcset="" />
+            </li>
+          </ul>
+        </div>
       </div>
       <Recommendations :showId="Number(showID)" :showType="showType" />
     </div>
@@ -155,16 +174,18 @@ export default {
         height: "100%",
         backgroundImage: "",
       },
+      mediaData: {},
     };
   },
 
   methods: {
-     getData(URL) {
+    getData(URL) {
       axios
         .get(URL)
         .then(({ data }) => {
           this.data = data;
           this.sliderBG.backgroundImage = `url(${this.baseImageURL}${data.backdrop_path})`;
+          this.mediaData = data.images.backdrops;
           console.log(data);
         })
         .catch((err) => {
@@ -196,6 +217,24 @@ export default {
         }
       }
     },
+    getMedia(e, mediaType) {
+      // TODO: 👇 Add more comments to explain this code 👇
+      // Add dynamic class on click
+      for (let i = 0; i < e.path[1].childNodes.length; i++) {
+        if (e.path[1].childNodes[i].className == "active_li") {
+          e.path[1].childNodes[i].className = "";
+        }
+      }
+      e.target.className += "active_li";
+
+      // TODO: Filter the media based on media click
+      if (mediaType == "posters") {
+        this.mediaData = this.data.images.posters;
+      }
+      if (mediaType == "backdrops") {
+        this.mediaData = this.data.images.backdrops;
+      }
+    },
   },
   created() {
     this.showID = this.$route.params.id;
@@ -204,12 +243,12 @@ export default {
     let URL = `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}
     ?api_key=${process.env.VUE_APP_API_KEY}${appendToResponse}`;
     this.getData(URL);
-   
   },
   computed: {
     release_date() {
       return this.data.release_date.split("-")[0];
     },
+
     first_air_date() {
       return this.data.first_air_date.split("-")[0];
     },
@@ -219,6 +258,7 @@ export default {
 
 <style lang="scss" scoped>
 * {
+  // FIXME: remove it and fiz the header bug
   z-index: -1;
 }
 .flex {
@@ -320,6 +360,51 @@ export default {
         }
         h4 {
           margin: 5px 0px 5px 0px;
+        }
+      }
+    }
+
+    .media {
+      margin-bottom: 100px;
+      margin-top: 100px;
+      .col-1 {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        width: 700px;
+        h3{
+          align-self: center;
+        }
+        ul {
+          z-index: 555555 !important;
+          display: flex;
+          justify-content: space-around;
+          li {
+            padding: 10px;
+            height: 50px;
+          }
+        }
+      }
+      .active_li {
+        border-bottom: 4px solid #ddd;
+      }
+      .media_content {
+        width: 700px;
+        height: 200px;
+        ul {
+          display: flex;
+          overflow: auto;
+          li {
+            margin: 15px 6px 10px 0px;
+            border-radius: 20px;
+            box-shadow: 6px 6px 14px 0 rgba(0, 0, 0, 0.2),
+              -8px -8px 18px 0 hsla(0, 0%, 100%, 0.55);
+            padding: 10px;
+            img {
+              border-radius: 20px;
+              width: 280px;
+              height: 244px;
+            }
+          }
         }
       }
     }

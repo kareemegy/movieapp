@@ -272,8 +272,7 @@ h1 {
     margin-top: 3px;
   }
 
-  .img:hover {
-  }
+
 }
 
 .d-flex {
