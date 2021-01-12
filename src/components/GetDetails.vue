@@ -70,15 +70,31 @@
         <div class="col-1">
           <h3>Media</h3>
           <ul>
-            <li class="active_li" @click="getMedia($event,'backdrops')">Backdrops</li>
-            <li @click="getMedia($event,'posters')">Posters</li>
-            <li @click="getMedia($event,'videos')">Videos</li>
+            <li class="active_li" @click="getMedia($event, 'backdrops')">
+              Backdrops
+            </li>
+            <li @click="getMedia($event, 'posters')">Posters</li>
+            <li @click="getMedia($event, 'viedos')">Videos</li>
           </ul>
         </div>
         <div class="media_content">
           <ul>
-            <li v-for="(image, i) in mediaData" :key="i">
+            <li
+              v-show="!isViedosCliced"
+              v-for="(image, i) in mediaData"
+              :key="i"
+            >
               <img :src="baseImageURL + image.file_path" alt="" srcset="" />
+            </li>
+            <li v-show="isViedosCliced" v-for="(viedo, i) in viedos" :key="i">
+              <iframe
+                width="560"
+                height="280"
+                :src="baseIViedoURL + viedo.key"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
             </li>
           </ul>
         </div>
@@ -158,7 +174,7 @@ export default {
       showID: 0,
       showType: "",
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
-      baseIViedoURL: " https://www.youtube.com/watch?v=",
+      baseIViedoURL: "https://www.youtube.com/embed/",
       data: {},
       sliderBG: {
         backgroundImage: "",
@@ -175,6 +191,8 @@ export default {
         backgroundImage: "",
       },
       mediaData: {},
+      viedos: {},
+      isViedosCliced: false,
     };
   },
 
@@ -186,6 +204,7 @@ export default {
           this.data = data;
           this.sliderBG.backgroundImage = `url(${this.baseImageURL}${data.backdrop_path})`;
           this.mediaData = data.images.backdrops;
+          this.viedos = data.videos.results;
           console.log(data);
         })
         .catch((err) => {
@@ -227,12 +246,19 @@ export default {
       }
       e.target.className += "active_li";
 
-      // TODO: Filter the media based on media click
+      // Filter media based on media type 
       if (mediaType == "posters") {
         this.mediaData = this.data.images.posters;
+        this.isViedosCliced = false;
       }
       if (mediaType == "backdrops") {
         this.mediaData = this.data.images.backdrops;
+        this.isViedosCliced = false;
+      }
+
+      if (mediaType == "viedos") {
+        this.isViedosCliced = true;
+        console.log("worked");
       }
     },
   },
@@ -371,7 +397,7 @@ export default {
         display: grid;
         grid-template-columns: 1fr 2fr;
         width: 700px;
-        h3{
+        h3 {
           align-self: center;
         }
         ul {
@@ -390,10 +416,14 @@ export default {
       .media_content {
         width: 700px;
         height: 200px;
+
         ul {
           display: flex;
           overflow: auto;
+          z-index: 5555 !important;
+
           li {
+            z-index: 5555 !important;
             margin: 15px 6px 10px 0px;
             border-radius: 20px;
             box-shadow: 6px 6px 14px 0 rgba(0, 0, 0, 0.2),

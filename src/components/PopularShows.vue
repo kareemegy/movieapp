@@ -41,6 +41,7 @@
         :key="movie.id"
       >
         <router-link
+          @click="redirect()"
           :to="
             `/details/${showType}/${movie.id}/${
               movie.title
@@ -207,6 +208,9 @@ export default {
         this.getData(this.onTvURl);
       }
       console.log("inTheaters");
+    },
+    redirect() {
+      console.log("dd");
     },
   },
   created() {

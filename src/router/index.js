@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
 import GetDetails from "@/components/GetDetails.vue";
 import NotFound from "@/components/NotFound.vue";
@@ -24,7 +24,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({ x: 0, y: 0 }),
 });
 
-export default  router;
+export default router;

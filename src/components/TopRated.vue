@@ -36,8 +36,7 @@
         :key="movie.id"
       >
         <router-link
-                @click="redirect()"
-
+          @click="redirect()"
           :to="
             `/details/${showType}/${movie.id}/${
               movie.title
@@ -164,7 +163,7 @@ export default {
       this.swiper = swiper;
       console.log(swiper);
     },
-    redirect(){
+    redirect() {
       console.log("dd");
     },
     onSlideChange() {
