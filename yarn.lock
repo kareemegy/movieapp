@@ -9346,7 +9346,14 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha1-HuO8mhbsv1EYvjNLsV+cRvgvWCU=
 
-vue@^3.0.5:
+vue3-progress-bar@^0.0.1-dev7:
+  version "0.0.1-dev7"
+  resolved "https://registry.yarnpkg.com/vue3-progress-bar/-/vue3-progress-bar-0.0.1-dev7.tgz#7bea400bebd9b2fe4755faf287a0cee8455b914f"
+  integrity sha512-DCzcIpOM5jR28EHN8Zm5h+lmSQe6AIF6gGX7QdHlwQRGkUy01vaF3ggvHhoJWf+TCIf8d4vAsHYN6byoQxiKlg==
+  dependencies:
+    vue "^3.0.2"
+
+vue@^3.0.2, vue@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.0.5.tgz#de1b82eba24abfe71e0970fc9b8d4b2babdc3fe1"
   integrity sha512-TfaprOmtsAfhQau7WsomXZ8d9op/dkQLNIq8qPV3A0Vxs6GR5E+c1rfJS1SDkXRQj+dFyfnec7+U0Be1huiScg==

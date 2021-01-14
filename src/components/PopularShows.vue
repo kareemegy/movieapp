@@ -210,11 +210,14 @@ export default {
       console.log("inTheaters");
     },
     redirect() {
-      console.log("dd");
+      this.$progress.start();
     },
   },
   created() {
     this.getData(this.inTheatersURL);
+  },
+  mounted() {
+    this.$progress.finish();
   },
 };
 </script>

@@ -3,6 +3,7 @@
     <Header />
     <div>
       <router-view />
+       <vue3-progress-bar />
     </div>
     <Footer />
   </div>

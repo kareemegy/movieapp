@@ -1,23 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "@/views/HomePage.vue";
-import GetDetails from "@/components/GetDetails.vue";
-import NotFound from "@/components/NotFound.vue";
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: HomePage,
+    component: () => import("@/views/HomePage.vue"),
   },
 
   {
     path: "/details/:type/:id/:name",
     name: "Details",
-    component: GetDetails,
+    component: () => import("@/components/GetDetails.vue"),
   },
 
   {
     path: "/:catchAll(.*)",
-    component: NotFound,
+    component: () => import("@/components/NotFound.vue"),
   },
 ];
 

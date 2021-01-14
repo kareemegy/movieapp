@@ -1,14 +1,21 @@
 <template>
-  <div class="full_contianer" v-if="data" :style="sliderBG">
+  <div
+    class="full_contianer"
+    :class="{ fade: isLoading }"
+    v-show="isLoading"
+    :style="sliderBG"
+  >
     <div :style="layer"></div>
     <section class="container">
-      <img
-        crossorigin="anonymous"
-        ref="myImg"
-        :src="`${baseImageURL}${data.poster_path}`"
-        :alt="`${data.name}`"
-        @load="getBackDropColor()"
-      />
+      <div>
+        <img
+          crossorigin="anonymous"
+          ref="myImg"
+          :src="`${baseImageURL}${data.poster_path}`"
+          :alt="`${data.name}`"
+          @load="getBackDropColor()"
+        />
+      </div>
       <div class="show_description">
         <div class="show_description_title flex">
           <!-- for movies  -->
@@ -42,12 +49,67 @@
       </div>
     </section>
   </div>
+  <!-- header  placeholder loader  -->
+  <div class="placeholder" :class="{ fade: isLoading }" v-if="!isLoading">
+    <svg
+      id="dots"
+      width="132px"
+      height="58px"
+      viewBox="0 0 132 58"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+    >
+      <!-- Generator: Sketch 3.5.1 (25234) - http://www.bohemiancoding.com/sketch -->
+      <title>dots</title>
+      <desc>Created with Sketch.</desc>
+      <defs></defs>
+      <g
+        id="Page-1"
+        stroke="none"
+        stroke-width="1"
+        fill="none"
+        fill-rule="evenodd"
+        sketch:type="MSPage"
+      >
+        <g id="dots" sketch:type="MSArtboardGroup" fill="#A3A3A3">
+          <circle
+            id="dot1"
+            sketch:type="MSShapeGroup"
+            cx="25"
+            cy="30"
+            r="13"
+          ></circle>
+          <circle
+            id="dot2"
+            sketch:type="MSShapeGroup"
+            cx="65"
+            cy="30"
+            r="13"
+          ></circle>
+          <circle
+            id="dot3"
+            sketch:type="MSShapeGroup"
+            cx="105"
+            cy="30"
+            r="13"
+          ></circle>
+        </g>
+      </g>
+    </svg>
+  </div>
   <!-- Series Cast -->
   <section class="container series_cast">
-    <div v-if="data.credits" class="col-1">
+    <div class="col-1">
       <h2 class="section_h2">Series Cast</h2>
+      <!-- cast / crew -->
       <div class="section_cast_box">
-        <ul class="section_cast_box_crew_box">
+        <ul
+          v-if="data.credits"
+          :class="{ fade: isCastLoading }"
+          class="section_cast_box_crew_box"
+        >
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"
             :key="crew.credit_id"
@@ -60,12 +122,75 @@
                 )
               "
               :alt="crew.name"
+              @load="imageCastLoaded"
             />
             <h4>{{ crew.name }}</h4>
             <p>{{ crew.character }}</p>
           </li>
         </ul>
+        <!-- placeholder boxs -->
+        <ul
+          v-if="!data.credits"
+          class="placeholder_boxs"
+          :class="{ fade: isCastLoading }"
+        >
+          <li v-for="(item, i) in 6" :key="i">
+            <svg
+              role="img"
+              aria-labelledby="loading-aria"
+              viewBox="0 0 400 460"
+              preserveAspectRatio="none"
+            >
+              <title id="loading-aria">Loading...</title>
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                clip-path="url(#clip-path)"
+                style='fill: url("#fill");'
+              ></rect>
+              <defs>
+                <clipPath id="clip-path">
+                  <rect x="19" y="4" rx="17" ry="17" width="131" height="175" />
+                  <rect x="24" y="189" rx="6" ry="6" width="104" height="17" />
+                  <rect x="24" y="215" rx="6" ry="6" width="75" height="17" />
+                </clipPath>
+                <linearGradient id="fill">
+                  <stop offset="0.599964" stop-color="#bec0c1" stop-opacity="1">
+                    <animate
+                      attributeName="offset"
+                      values="-2; -2; 1"
+                      keyTimes="0; 0.25; 1"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    ></animate>
+                  </stop>
+                  <stop offset="1.59996" stop-color="#ecebeb" stop-opacity="1">
+                    <animate
+                      attributeName="offset"
+                      values="-1; -1; 2"
+                      keyTimes="0; 0.25; 1"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    ></animate>
+                  </stop>
+                  <stop offset="2.59996" stop-color="#bec0c1" stop-opacity="1">
+                    <animate
+                      attributeName="offset"
+                      values="0; 0; 3"
+                      keyTimes="0; 0.25; 1"
+                      dur=".5s"
+                      repeatCount="indefinite"
+                    ></animate>
+                  </stop>
+                </linearGradient>
+              </defs>
+            </svg>
+          </li>
+        </ul>
       </div>
+      <!-- Media -->
       <div class="media">
         <div class="col-1">
           <h3>Media</h3>
@@ -173,6 +298,7 @@ export default {
     return {
       showID: 0,
       showType: "",
+      isLoading: false,
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: "https://www.youtube.com/embed/",
       data: {},
@@ -193,6 +319,7 @@ export default {
       mediaData: {},
       viedos: {},
       isViedosCliced: false,
+      isCastLoading: false,
     };
   },
 
@@ -206,6 +333,7 @@ export default {
           this.mediaData = data.images.backdrops;
           this.viedos = data.videos.results;
           console.log(data);
+          this.$progress.finish();
         })
         .catch((err) => {
           console.log(err);
@@ -221,6 +349,7 @@ export default {
       rgba(${result[0]}, ${result[1]},${result[2]}, 1.00) 150px,
       rgba(${result[0]}, ${result[1]},${result[2]}, 0.78) 100%
     )`;
+      this.isLoading = true;
       console.log(result);
     },
 
@@ -245,8 +374,7 @@ export default {
         }
       }
       e.target.className += "active_li";
-
-      // Filter media based on media type 
+      // Filter media based on media type
       if (mediaType == "posters") {
         this.mediaData = this.data.images.posters;
         this.isViedosCliced = false;
@@ -260,6 +388,9 @@ export default {
         this.isViedosCliced = true;
         console.log("worked");
       }
+    },
+    imageCastLoaded() {
+      this.isCastLoading = true;
     },
   },
   created() {
@@ -283,9 +414,61 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.test {
+  background: #000;
+}
 * {
-  // FIXME: remove it and fiz the header bug
+  // FIXME: remove it and fix the header bug
   z-index: -1;
+}
+.placeholder {
+  background: rgb(202, 202, 202);
+  svg {
+    margin: auto;
+    display: flex;
+    height: 450px;
+  }
+
+  #dots #dot1 {
+    animation: load 1s infinite;
+  }
+
+  #dots #dot2 {
+    animation: load 1s infinite;
+    animation-delay: 0.2s;
+  }
+
+  #dots #dot3 {
+    animation: load 1s infinite;
+    animation-delay: 0.4s;
+  }
+
+  @keyframes load {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+.fade {
+  animation: fade 1s ease-in-out;
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
 }
 .flex {
   display: flex;
@@ -365,6 +548,19 @@ export default {
     .section_cast_box {
       overflow: auto;
       white-space: nowrap;
+      .placeholder_boxs {
+        display: flex;
+        padding: 10px;
+        width: 120px; // set it to any width(no-effect) but not 100%
+        svg {
+          width: 300px;
+          height: 100%;
+        }
+        li {
+          white-space: break-spaces;
+          display: flex;
+        }
+      }
       .section_cast_box_crew_box {
         display: flex;
         width: 400px; // set it to any width(no-effect) but not 100%
@@ -405,6 +601,7 @@ export default {
           display: flex;
           justify-content: space-around;
           li {
+            cursor: pointer;
             padding: 10px;
             height: 50px;
           }
