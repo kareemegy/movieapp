@@ -228,8 +228,8 @@ export default {
 }
 
 h1 {
-  font-family: sans-serif;
-  font-size: 26px;
+  font-size: 22px;
+  font-weight: 600;
   margin: 24px 0px 5px 20px;
 }
 .img {

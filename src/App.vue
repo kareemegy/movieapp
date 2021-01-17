@@ -3,7 +3,7 @@
     <Header />
     <div>
       <router-view />
-       <vue3-progress-bar />
+      <vue3-progress-bar />
     </div>
     <Footer />
   </div>
@@ -15,7 +15,7 @@ import Footer from "@/components/Footer.vue";
 export default {
   components: {
     Header,
-    Footer
+    Footer,
   },
 };
 </script>
@@ -25,14 +25,14 @@ export default {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Source Sans Pro", Arial, sans-serif;
 }
-li{
+li {
   list-style: none;
 }
-a{
+a {
   text-decoration: none;
-  color:black;
+  color: black;
 }
 .container {
   width: 1300px;

@@ -1,23 +1,24 @@
 <template>
+  <!-- Start Header -->
   <div
-    class="full_contianer"
-    :class="{ fade: isLoading }"
+    class="header"
+    :class="{ fadeAnimation: isLoading }"
     v-show="isLoading"
-    :style="sliderBG"
+    :style="header_background_image"
   >
-    <div :style="layer"></div>
-    <section class="container">
-      <div>
+    <div :style="header__overlay"></div>
+    <section class="header__content container">
+      <div class="header__content__image">
         <img
           crossorigin="anonymous"
           ref="myImg"
-          :src="`${baseImageURL}${data.poster_path}`"
+          :src="imgUrl(data.poster_path)"
           :alt="`${data.name}`"
           @load="getBackDropColor()"
         />
       </div>
-      <div class="show_description">
-        <div class="show_description_title flex">
+      <div class="header__description">
+        <div class="header__description__title flex">
           <!-- for movies  -->
           <h1 v-if="data.name">{{ data.name }}</h1>
           <!-- for In Theaters  -->
@@ -28,8 +29,8 @@
           <p v-if="data.release_date">({{ release_date }})</p>
         </div>
 
-        <div v-if="data" class="show_description_type flex mb">
-          <ul class="genres flex">
+        <div v-if="data" class="header__description__genres flex mb">
+          <ul class="flex">
             <li v-for="type in data.genres" :key="type.id">{{ type.name }},</li>
           </ul>
           <h4 v-if="data.episode_run_time">
@@ -37,8 +38,10 @@
           </h4>
         </div>
 
-        <div class="movie_info">
-          <h1 class="tag_line mb">{{ data.tagline }}</h1>
+        <div class="header__description__show-info">
+          <h1 class="header__description__show-info__tag-line mb">
+            {{ data.tagline }}
+          </h1>
           <h3 class="mb-8">OverView</h3>
           <h4 class="mb">{{ data.overview }}</h4>
           <div v-if="data.created_by">
@@ -49,10 +52,15 @@
       </div>
     </section>
   </div>
-  <!-- header  placeholder loader  -->
-  <div class="placeholder" :class="{ fade: isLoading }" v-if="!isLoading">
+  <!-- End Header -->
+  <!-- Header Skeleton   -->
+  <div
+    class="header-skeleton"
+    :class="{ fadeAnimation: isLoading }"
+    v-if="!isLoading"
+  >
     <svg
-      id="dots"
+      class="header-skeleton__dots"
       width="132px"
       height="58px"
       viewBox="0 0 132 58"
@@ -73,23 +81,27 @@
         fill-rule="evenodd"
         sketch:type="MSPage"
       >
-        <g id="dots" sketch:type="MSArtboardGroup" fill="#A3A3A3">
+        <g
+          class="header-skeleton__dots"
+          sketch:type="MSArtboardGroup"
+          fill="#A3A3A3"
+        >
           <circle
-            id="dot1"
+            id="header-skeleton__dot1"
             sketch:type="MSShapeGroup"
             cx="25"
             cy="30"
             r="13"
           ></circle>
           <circle
-            id="dot2"
+            class="header-skeleton__dot2"
             sketch:type="MSShapeGroup"
             cx="65"
             cy="30"
             r="13"
           ></circle>
           <circle
-            id="dot3"
+            class="header-skeleton__dot3"
             sketch:type="MSShapeGroup"
             cx="105"
             cy="30"
@@ -99,27 +111,27 @@
       </g>
     </svg>
   </div>
-  <!-- Series Cast -->
-  <section class="container series_cast">
-    <div class="col-1">
-      <h2 class="section_h2">Series Cast</h2>
+  <!-- End Header Skeleton -->
+
+  <!-- Star crew -->
+  <section class="container crew">
+    <div class="flex-column">
+      <h2 class="crew__title">Series Cast</h2>
       <!-- cast / crew -->
-      <div class="section_cast_box">
+      <div class="crew__cards">
         <ul
           v-if="data.credits"
-          :class="{ fade: isCastLoading }"
-          class="section_cast_box_crew_box"
+          :class="{ fadeAnimation: isCrewLoading }"
+          class="crew__cards__list flex"
         >
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"
             :key="crew.credit_id"
+            class="crew__cards__list_card grow-animation"
           >
             <img
               :src="
-                seriesCastLoadedImage(
-                  baseImageURL + crew.profile_path,
-                  data.credits.cast[i]
-                )
+                seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
               "
               :alt="crew.name"
               @load="imageCastLoaded"
@@ -128,11 +140,11 @@
             <p>{{ crew.character }}</p>
           </li>
         </ul>
-        <!-- placeholder boxs -->
+        <!-- crew skeleton -->
         <ul
           v-if="!data.credits"
-          class="placeholder_boxs"
-          :class="{ fade: isCastLoading }"
+          class="crew-skeleton"
+          :class="{ fadeAnimation: isCrewLoading }"
         >
           <li v-for="(item, i) in 6" :key="i">
             <svg
@@ -192,7 +204,7 @@
       </div>
       <!-- Media -->
       <div class="media">
-        <div class="col-1">
+        <div class="media__description">
           <h3>Media</h3>
           <ul>
             <li class="active_li" @click="getMedia($event, 'backdrops')">
@@ -202,14 +214,14 @@
             <li @click="getMedia($event, 'viedos')">Videos</li>
           </ul>
         </div>
-        <div class="media_content">
+        <div class="media__content">
           <ul>
             <li
               v-show="!isViedosCliced"
               v-for="(image, i) in mediaData"
               :key="i"
             >
-              <img :src="baseImageURL + image.file_path" alt="" srcset="" />
+              <img :src="imgUrl(image.file_path)" alt="" srcset="" />
             </li>
             <li v-show="isViedosCliced" v-for="(viedo, i) in viedos" :key="i">
               <iframe
@@ -226,9 +238,11 @@
       </div>
       <Recommendations :showId="Number(showID)" :showType="showType" />
     </div>
-    <!-- show general ifo -->
-    <div v-if="data" class="col-2">
-      <div class="social_icons">
+    <!-- End crew -->
+
+    <!-- Start side bar  -->
+    <div v-if="data" class="side-bar">
+      <div class="social-icons">
         <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
         <a href="#"><img src="../assets/instagram.png" alt="instagramicon"/></a>
         <a href="#"><img src="../assets/twitter.png" alt="twittericon"/></a>
@@ -241,7 +255,7 @@
         <h4>Network</h4>
         <ul>
           <li v-for="network in data.networks" :key="network.id">
-            <img class="network_img" :src="baseImageURL + network.logo_path" />
+            <img class="img-width" :src="baseImageURL + network.logo_path" />
           </li>
         </ul>
       </div>
@@ -260,7 +274,7 @@
       </div>
       <div>
         <h4 v-if="data.spoken_languages">Original Language</h4>
-        <ul class="langs">
+        <ul class="langs flex">
           <li v-for="lang in data.spoken_languages" :key="lang.id">
             {{ lang.name + "," }}
           </li>
@@ -283,6 +297,7 @@
         </ul>
       </div>
     </div>
+    <!-- End side bar  -->
   </section>
 </template>
 
@@ -302,13 +317,13 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       baseIViedoURL: "https://www.youtube.com/embed/",
       data: {},
-      sliderBG: {
+      header_background_image: {
         backgroundImage: "",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: " right -200px top",
       },
-      layer: {
+      header__overlay: {
         position: "absolute",
         top: "0",
         left: "0",
@@ -319,7 +334,7 @@ export default {
       mediaData: {},
       viedos: {},
       isViedosCliced: false,
-      isCastLoading: false,
+      isCrewLoading: false,
     };
   },
 
@@ -329,7 +344,7 @@ export default {
         .get(URL)
         .then(({ data }) => {
           this.data = data;
-          this.sliderBG.backgroundImage = `url(${this.baseImageURL}${data.backdrop_path})`;
+          this.header_background_image.backgroundImage = `url(${this.baseImageURL}${data.backdrop_path})`;
           this.mediaData = data.images.backdrops;
           this.viedos = data.videos.results;
           console.log(data);
@@ -344,7 +359,7 @@ export default {
       const img = this.$refs.myImg;
       const result = colorThief.getColor(img);
 
-      this.layer.backgroundImage = `linear-gradient(
+      this.header__overlay.backgroundImage = `linear-gradient(
      to right,
       rgba(${result[0]}, ${result[1]},${result[2]}, 1.00) 150px,
       rgba(${result[0]}, ${result[1]},${result[2]}, 0.78) 100%
@@ -353,9 +368,9 @@ export default {
       console.log(result);
     },
 
-    seriesCastLoadedImage(image_url, gender) {
+    seriesCastLoadedImage(url, gender) {
       if (gender.profile_path) {
-        return image_url;
+        return this.imgUrl(url);
       }
       if (!gender.profile_path) {
         if (gender.gender == 1) {
@@ -390,7 +405,10 @@ export default {
       }
     },
     imageCastLoaded() {
-      this.isCastLoading = true;
+      this.isCrewLoading = true;
+    },
+    imgUrl(path) {
+      return this.baseImageURL + path;
     },
   },
   created() {
@@ -405,7 +423,6 @@ export default {
     release_date() {
       return this.data.release_date.split("-")[0];
     },
-
     first_air_date() {
       return this.data.first_air_date.split("-")[0];
     },
@@ -414,14 +431,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.grow-animation {
+  transition: all 0.2s ease-in-out;
+}
+.grow-animation:hover {
+  transform: scale(1.02);
+}
 .test {
   background: #000;
 }
-* {
-  // FIXME: remove it and fix the header bug
-  z-index: -1;
-}
-.placeholder {
+.header-skeleton {
   background: rgb(202, 202, 202);
   svg {
     margin: auto;
@@ -429,16 +448,16 @@ export default {
     height: 450px;
   }
 
-  #dots #dot1 {
+  .header-skeleton__dots .header-skeleton__dot1 {
     animation: load 1s infinite;
   }
 
-  #dots #dot2 {
+  .header-skeleton__dots .header-skeleton__dot2 {
     animation: load 1s infinite;
     animation-delay: 0.2s;
   }
 
-  #dots #dot3 {
+  .header-skeleton__dots .header-skeleton__dot3 {
     animation: load 1s infinite;
     animation-delay: 0.4s;
   }
@@ -455,9 +474,10 @@ export default {
     }
   }
 }
-.fade {
-  animation: fade 1s ease-in-out;
-  @keyframes fade {
+.fadeAnimation {
+  animation: fadeAnimation 1s ease-in-out;
+
+  @keyframes fadeAnimation {
     0% {
       opacity: 0;
     }
@@ -473,6 +493,10 @@ export default {
 .flex {
   display: flex;
 }
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 .mb {
   margin-bottom: 30px;
 }
@@ -483,33 +507,34 @@ export default {
   margin-top: 10px;
 }
 
-.full_contianer {
+.header {
   width: 100%;
   position: relative;
   height: 540px;
 
-  section {
+  .header__content {
     display: grid;
     margin-top: 50px;
     padding: 30px;
-    li {
-      list-style: none;
-    }
     grid-template-columns: 350px 1fr;
-    img {
-      border-radius: 10px;
-      height: 450px;
+
+    .header__content__image {
+      z-index: 1;
+      img {
+        border-radius: 10px;
+        height: 450px;
+      }
     }
   }
 
-  .show_description {
+  .header__description {
+    z-index: 1;
     color: white;
     display: flex;
     flex-direction: column;
     padding-top: 50px;
-    .show_description_title {
+    .header__description__title {
       margin-bottom: 8px;
-
       p {
         display: flex;
         align-items: center;
@@ -517,126 +542,117 @@ export default {
         color: #c9c9cb;
       }
     }
-    .show_description_type {
-      .genres li:last-child {
+    .header__description__genres {
+      ul li:last-child {
         padding-right: 5px;
       }
     }
   }
-  .movie_info {
-    .tag_line {
-      font-size: 18px;
-      font-weight: 400;
-      font-style: italic;
-      opacity: 0.7;
-    }
+  .header__description__show-info__tag-line {
+    font-size: 18px;
+    font-weight: 600;
+    font-style: italic;
+    opacity: 0.7;
   }
 }
 
 // Series Cast
-.series_cast {
+.crew {
   display: grid;
   grid-template-columns: 3fr 1fr;
-  .col-1 {
-    z-index: 11111 !important;
-    display: flex;
-    flex-direction: column;
-    .section_h2 {
-      margin: 20px 0px 10px 8px;
-    }
 
-    .section_cast_box {
-      overflow: auto;
-      white-space: nowrap;
-      .placeholder_boxs {
+  .crew__title {
+    margin: 20px 0px 10px 8px;
+  }
+
+  .crew__cards {
+    overflow: auto;
+    white-space: nowrap;
+    .crew-skeleton {
+      display: flex;
+      padding: 10px;
+      width: 120px; // set it to any width(no-effect) but not 100%
+      svg {
+        width: 300px;
+        height: 100%;
+      }
+      li {
+        white-space: break-spaces;
         display: flex;
-        padding: 10px;
-        width: 120px; // set it to any width(no-effect) but not 100%
-        svg {
-          width: 300px;
-          height: 100%;
-        }
+      }
+    }
+    .crew__cards__list {
+      width: 400px; // set it to any width(no-effect) but not 100%
+      height: 300px;
+      .crew__cards__list_card {
+        white-space: break-spaces;
+        display: flex;
+        flex-direction: column;
+        margin: 5px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px 0 #ccc;
+        padding: 5px;
+      }
+      img {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        height: 190px;
+        width: 150px;
+      }
+      h4 {
+        margin: 5px 0px 5px 0px;
+      }
+    }
+  }
+
+  .media {
+    margin-bottom: 100px;
+    margin-top: 100px;
+    .media__description {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      width: 700px;
+      h3 {
+        align-self: center;
+      }
+      ul {
+        display: flex;
+        justify-content: space-around;
         li {
-          white-space: break-spaces;
-          display: flex;
-        }
-      }
-      .section_cast_box_crew_box {
-        display: flex;
-        width: 400px; // set it to any width(no-effect) but not 100%
-        height: 300px;
-        & li {
-          white-space: break-spaces;
-          display: flex;
-          flex-direction: column;
-          margin: 5px;
-          border-radius: 15px;
-          box-shadow: 0 4px 8px 0 #ccc;
-          padding: 5px;
-        }
-        img {
-          border-top-left-radius: 15px;
-          border-top-right-radius: 15px;
-          height: 190px;
-          width: 150px;
-        }
-        h4 {
-          margin: 5px 0px 5px 0px;
+          cursor: pointer;
+          padding: 10px;
+          height: 50px;
         }
       }
     }
+    .active_li {
+      border-bottom: 4px solid #ddd;
+    }
+    .media__content {
+      width: 700px;
+      height: 200px;
 
-    .media {
-      margin-bottom: 100px;
-      margin-top: 100px;
-      .col-1 {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        width: 700px;
-        h3 {
-          align-self: center;
-        }
-        ul {
-          z-index: 555555 !important;
-          display: flex;
-          justify-content: space-around;
-          li {
-            cursor: pointer;
-            padding: 10px;
-            height: 50px;
-          }
-        }
-      }
-      .active_li {
-        border-bottom: 4px solid #ddd;
-      }
-      .media_content {
-        width: 700px;
-        height: 200px;
+      ul {
+        display: flex;
+        overflow: auto;
 
-        ul {
-          display: flex;
-          overflow: auto;
-          z-index: 5555 !important;
-
-          li {
-            z-index: 5555 !important;
-            margin: 15px 6px 10px 0px;
+        li {
+          margin: 15px 6px 10px 0px;
+          border-radius: 20px;
+          box-shadow: 6px 6px 14px 0 rgba(0, 0, 0, 0.2),
+            -8px -8px 18px 0 hsla(0, 0%, 100%, 0.55);
+          padding: 10px;
+          img {
             border-radius: 20px;
-            box-shadow: 6px 6px 14px 0 rgba(0, 0, 0, 0.2),
-              -8px -8px 18px 0 hsla(0, 0%, 100%, 0.55);
-            padding: 10px;
-            img {
-              border-radius: 20px;
-              width: 280px;
-              height: 244px;
-            }
+            width: 280px;
+            height: 244px;
           }
         }
       }
     }
   }
-  .col-2 {
+
+  .side-bar {
     display: flex;
     flex-direction: column;
     padding-left: 35px;
@@ -644,7 +660,7 @@ export default {
     h4 {
       margin-top: 15px;
     }
-    .social_icons {
+    .social-icons {
       display: flex;
       // justify-content: center;
       a {
@@ -656,12 +672,11 @@ export default {
         }
       }
     }
-    .network_img {
+    .img-width {
       width: 40%;
       // height: 60%;
     }
     .langs {
-      display: flex;
       flex-wrap: wrap;
     }
     .keywords {
