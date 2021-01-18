@@ -22,18 +22,9 @@ export default {
 
 <style>
 * {
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
   font-family: "Source Sans Pro", Arial, sans-serif;
 }
-li {
-  list-style: none;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
+
 .container {
   width: 1300px;
   margin: 0px auto;

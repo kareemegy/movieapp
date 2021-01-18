@@ -22,16 +22,14 @@
       :options="swiperOption"
       :slides-per-view="9"
       :autoplay="true"
-      navigation
       :pagination="{ clickable: true }"
       @swiper="onSwiper"
-      @slideChange="onSlideChange"
       :class="{
         fade_out: fade,
       }"
     >
       <swiper-slide
-        class="slides"
+        class="swiper__slides"
         :class="{
           fade_out: !fade2,
           fade_out2: data.results,
@@ -51,12 +49,12 @@
           "
         >
           <img
-            class="img"
+            class="swiper__slides__img"
             :src="baseImageURL + movie.poster_path"
             alt="movie image"
           />
         </router-link>
-        <div class="movie_description">
+        <div class="swiper__slides__description">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
           <h4
             v-text="
@@ -67,9 +65,9 @@
           ></h4>
         </div>
       </swiper-slide>
-      <!-- place holder slides -->
+      <!-- place holder swiper__slides -->
       <swiper-slide
-        class="slides"
+        class="swiper__slides"
         v-for="item in 10"
         :Key="item"
         v-show="!data.results"
@@ -140,6 +138,7 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 import "swiper/swiper.scss";
 import "swiper/components/pagination/pagination.scss";
 import "swiper/components/navigation/navigation.scss";
+import axios from "axios";
 
 export default {
   components: {
@@ -151,10 +150,6 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       showType: "tv",
       data: {},
-      onTvURl:
-        "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
-      inTheatersURL:
-        "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       isActive: true,
       isSwitch: true,
       fade: false,
@@ -168,7 +163,6 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper;
     },
-
     onSlideChange() {
       // console.log(swiper.activeIndex);
     },
@@ -177,9 +171,8 @@ export default {
     },
     async getData(URL) {
       try {
-        let response = await fetch(URL);
-        let data = await response.json();
-        this.data = data;
+        let data = await axios.get(URL);
+        this.data = data.data;
       } catch (err) {
         console.error(err);
       }
@@ -194,7 +187,9 @@ export default {
         this.fade2 = false;
         this.isActive = true;
         this.isSwitch = true;
-        this.getData(this.inTheatersURL);
+        this.getData(
+          `${process.env.VUE_APP_API_ROOT_URL}/tv/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
+        );
       }
     },
     inTheaters() {
@@ -205,7 +200,9 @@ export default {
         this.fade2 = true;
         this.isActive = false;
         this.isSwitch = false;
-        this.getData(this.onTvURl);
+        this.getData(
+          `${process.env.VUE_APP_API_ROOT_URL}/movie/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
+        );
       }
       console.log("inTheaters");
     },
@@ -214,8 +211,11 @@ export default {
     },
   },
   created() {
-    this.getData(this.inTheatersURL);
+    this.getData(
+      `${process.env.VUE_APP_API_ROOT_URL}/tv/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
+    );
   },
+
   mounted() {
     this.$progress.finish();
   },
@@ -232,19 +232,19 @@ h1 {
   font-weight: 600;
   margin: 24px 0px 5px 20px;
 }
-.img {
+.swiper__slides__img {
   width: 150px;
   height: 250px;
   border-radius: 20px;
   padding: 8px;
 }
 
-.slides {
+.swiper__slides {
   height: 354px;
   width: auto;
 }
 
-.movie_description {
+.swiper__slides__description {
   padding: 8px;
   font-size: 13px;
   font-weight: 700;
@@ -308,6 +308,7 @@ h1 {
     height: 100%;
     display: flex;
     align-items: center;
+    font-size: 16px;
   }
   .inTheaters h3 {
     padding-left: 5px;

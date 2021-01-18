@@ -358,7 +358,6 @@ export default {
       const colorThief = new ColorThief();
       const img = this.$refs.myImg;
       const result = colorThief.getColor(img);
-
       this.header__overlay.backgroundImage = `linear-gradient(
      to right,
       rgba(${result[0]}, ${result[1]},${result[2]}, 1.00) 150px,
@@ -662,7 +661,6 @@ export default {
     }
     .social-icons {
       display: flex;
-      // justify-content: center;
       a {
         margin-top: 38px;
         padding: 5px;
