@@ -351,7 +351,7 @@ export default {
           this.$progress.finish();
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     },
     getBackDropColor() {

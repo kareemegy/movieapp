@@ -2,16 +2,19 @@
   <div>
     <div class="d-flex">
       <h1>What's popular</h1>
-      <div class="switch">
-        <div class="onTv" :class="{ active: isActive }" @click="onTv">
-          <h3 :class="{ switch_text_color: isSwitch }">On TV</h3>
+      <div class="switcher">
+        <div class="switcher__ontv" @click="onTv()">
+          <h3 :class="{ text_active: !toggle }">On TV</h3>
+          <span
+            class="active"
+            :class="{
+              active_left: isActiveLeft,
+              active_right: isActiveRight,
+            }"
+          ></span>
         </div>
-        <div
-          class="inTheaters"
-          :class="{ active: !isActive }"
-          @click="inTheaters"
-        >
-          <h3 :class="{ switch_text_color: !isSwitch }">In Theaters</h3>
+        <div @click="inTheaters">
+          <h3 :class="{ text_active: toggle }">In Theaters</h3>
         </div>
       </div>
     </div>
@@ -32,7 +35,7 @@
         class="swiper__slides"
         :class="{
           fade_out: !fade2,
-          fade_out2: data.results,
+          fade_out: data.results,
           hide: !data.results,
         }"
         v-for="movie in data.results"
@@ -150,13 +153,17 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       showType: "tv",
       data: {},
-      isActive: true,
-      isSwitch: true,
+      isActiveLeft: false,
+      isActiveRight: false,
       fade: false,
       fade2: true,
       swiperOption: { autoplay: true },
       swiper: {},
       isImgsLoaded: false,
+      toggle: false,
+      activeClass: {
+        log: true,
+      },
     };
   },
   methods: {
@@ -166,27 +173,31 @@ export default {
     onSlideChange() {
       // console.log(swiper.activeIndex);
     },
+    test() {
+      this.activeClass.log = false;
+      console.log(this.activeClass.log);
+    },
     imgLoad() {
       this.isImgsLoaded = true;
     },
     async getData(URL) {
       try {
-        let data = await axios.get(URL);
-        this.data = data.data;
+        let { data } = await axios.get(URL);
+        this.data = data;
       } catch (err) {
         console.error(err);
       }
     },
     onTv() {
-      console.log("On TV");
       this.swiper.slideTo(0, 0);
-      if (!this.isActive && !this.isSwitch) {
+      if (this.toggle) {
         this.showType = "tv";
         console.log(this.swiper);
         this.fade = false;
         this.fade2 = false;
-        this.isActive = true;
-        this.isSwitch = true;
+        this.isActiveRight = false;
+        this.isActiveLeft = true;
+        this.toggle = !this.toggle;
         this.getData(
           `${process.env.VUE_APP_API_ROOT_URL}/tv/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
         );
@@ -194,17 +205,18 @@ export default {
     },
     inTheaters() {
       this.swiper.slideTo(0, 0);
-      if (this.isActive && this.isSwitch) {
+      if (!this.toggle) {
         this.showType = "movie";
         this.fade = true;
         this.fade2 = true;
-        this.isActive = false;
-        this.isSwitch = false;
+        this.isActiveLeft = false;
+        this.isActiveRight = true;
+        this.toggle = !this.toggle;
+
         this.getData(
           `${process.env.VUE_APP_API_ROOT_URL}/movie/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
         );
       }
-      console.log("inTheaters");
     },
     redirect() {
       this.$progress.start();
@@ -215,14 +227,77 @@ export default {
       `${process.env.VUE_APP_API_ROOT_URL}/tv/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
     );
   },
-
   mounted() {
-    this.$progress.finish();
+    console.log(this.activeClass.log);
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.d-flex {
+  display: flex;
+}
+
+.switcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 150px;
+  border-radius: 10px;
+  border: 1px solid #032541;
+  margin-top: 19px;
+  height: 35px;
+  margin-left: 11px;
+  div,
+  h3 {
+    height: 100%;
+  }
+  h3 {
+    display: flex;
+    align-items: center;
+    color: #032541;
+    cursor: pointer;
+  }
+  .switcher__ontv {
+    position: relative;
+    width: 60px;
+  }
+  .active_right {
+    left: 70px;
+    width: 79px;
+  }
+  .active_left {
+    left: 0px;
+    width: 60px;
+  }
+}
+.active {
+  position: absolute;
+  border-radius: 10px;
+  border: 1px solid #032541;
+  z-index: -1;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  width: 60px;
+  background: #032541;
+  transition: left 0.5s ease-in, width 0.5s ease-in;
+}
+.text_active {
+  background-image: linear-gradient(
+    to right,
+    rgba(192, 254, 207, 1) 0%,
+    rgba(30, 213, 169, 1) 100%
+  );
+  transition: background-image 0.1s ease-in 0.4s;
+  background-size: 100%;
+  background-repeat: repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+}
 .hide {
   display: none;
 }
@@ -257,73 +332,7 @@ h1 {
   }
 }
 
-.d-flex {
-  display: flex;
-}
-.switch {
-  margin: 27px 0px 5px 27px;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  border: 1px solid #032541;
-  border-radius: 19px;
-  :nth-child(1) {
-    margin-right: 5px;
-  }
-  .onTv,
-  .inTheaters {
-    height: 100%;
-    border-radius: 10px;
-  }
-  .inTheaters {
-    padding-left: 10px;
-  }
-
-  .active {
-    background: #032541;
-    transition: background 0.2s ease-in-out;
-  }
-
-  .switch_text_color {
-    padding: 5px 30px 5px 30px;
-    background-image: linear-gradient(
-      to right,
-      rgba(192, 254, 207, 1) 0%,
-      rgba(30, 213, 169, 1) 100%
-    );
-    transition: background 0.2s ease-in-out;
-    background-size: 100%;
-    background-repeat: repeat;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -moz-background-clip: text;
-    -moz-text-fill-color: transparent;
-  }
-
-  .inTheaters,
-  .onTv h3 {
-    cursor: pointer;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-  }
-  .inTheaters h3 {
-    padding-left: 5px;
-    padding-right: 20px;
-  }
-  .onTv h3 {
-    padding-right: 30px;
-    padding-left: 10px;
-  }
-}
-
 .fade_out {
-  animation: fadeIn ease-in-out 1.1s;
-}
-.fade_out2 {
   animation: fadeIn ease-in-out 1.1s;
 }
 @keyframes fadeIn {
