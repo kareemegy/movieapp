@@ -44,10 +44,15 @@
             }`
           "
         >
-          <img
+          <!-- <img
             class="img"
             :src="baseImageURL + movie.poster_path"
             alt="movie image"
+          /> -->
+            <img
+            v-lazyload
+            class="swiper__slides__img"
+            :data-src="imgUrl(movie.poster_path)"
           />
         </router-link>
 
@@ -162,6 +167,9 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper;
       console.log(swiper);
+    },
+       imgUrl(path) {
+      return this.baseImageURL + path;
     },
     onSlideChange() {
       // console.log("slide change");
