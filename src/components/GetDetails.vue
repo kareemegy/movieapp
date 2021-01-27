@@ -1,4 +1,5 @@
 <template>
+  <Header class="header-size" />
   <!-- Start Header -->
   <div
     class="header"
@@ -130,6 +131,7 @@
             class="crew__cards__list_card grow-animation"
           >
             <img
+              loading="lazy"
               :src="
                 seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
               "
@@ -221,7 +223,11 @@
               v-for="(image, i) in mediaData"
               :key="i"
             >
-              <img :src="imgUrl(image.file_path)" alt="" srcset="" />
+              <img
+                loading="lazy"
+                :src="imgUrl(image.file_path)"
+                :alt="imgUrl(image.file_path)"
+              />
             </li>
             <li v-show="isViedosCliced" v-for="(viedo, i) in viedos" :key="i">
               <iframe
@@ -243,10 +249,18 @@
     <!-- Start side bar  -->
     <div v-if="data" class="side-bar">
       <div class="social-icons">
-        <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
-        <a href="#"><img src="../assets/instagram.png" alt="instagramicon"/></a>
-        <a href="#"><img src="../assets/twitter.png" alt="twittericon"/></a>
-        <a href="#"><img src="../assets/network.png" alt="networkicon"/></a>
+        <a href="#"
+          ><img loading="lazy" src="../assets/facebook.png" alt="facebookicon"
+        /></a>
+        <a href="#"
+          ><img loading="lazy" src="../assets/instagram.png" alt="instagramicon"
+        /></a>
+        <a href="#"
+          ><img loading="lazy" src="../assets/twitter.png" alt="twittericon"
+        /></a>
+        <a href="#"
+          ><img loading="lazy" src="../assets/network.png" alt="networkicon"
+        /></a>
       </div>
       <h4>Facts</h4>
       <h4>Status</h4>
@@ -255,7 +269,11 @@
         <h4>Network</h4>
         <ul>
           <li v-for="network in data.networks" :key="network.id">
-            <img class="img-width" :src="baseImageURL + network.logo_path" />
+            <img
+              loading="lazy"
+              class="img-width"
+              :src="baseImageURL + network.logo_path"
+            />
           </li>
         </ul>
       </div>
@@ -299,15 +317,20 @@
     </div>
     <!-- End side bar  -->
   </section>
+  <Footer />
 </template>
 
 <script>
 import Recommendations from "@/components/Recommendations.vue";
 import ColorThief from "colorthief";
 import axios from "axios";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 export default {
   components: {
     Recommendations,
+    Header,
+    Footer,
   },
   data() {
     return {
@@ -430,6 +453,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header-size {
+  height: 70px !important;
+}
 .grow-animation {
   transition: all 0.2s ease-in-out;
 }

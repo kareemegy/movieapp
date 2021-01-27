@@ -49,6 +49,7 @@
             class="img"
             :src="baseImageURL + movie.poster_path"
             alt="movie image"
+            loading="lazy"
           />
         </router-link>
 

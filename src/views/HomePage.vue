@@ -1,4 +1,5 @@
 <template>
+  <Header />
   <div class="container">
     <Search />
     <PopularShows />
@@ -6,6 +7,7 @@
     <!-- <LatestTrailers /> -->
     <Trending />
   </div>
+  <Footer />
 </template>
 
 <script>
@@ -14,13 +16,16 @@ import PopularShows from "@/components/PopularShows.vue";
 // import LatestTrailers from "@/components/LatestTrailers.vue";
 import TopRated from "@/components/TopRated.vue";
 import Trending from "@/components/Trending.vue";
-// import GetDetails from '@/components/GetDetails.vue';
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 export default {
   components: {
     Search,
     PopularShows,
     TopRated,
     Trending,
+    Header,
+    Footer,
   },
 };
 </script>

@@ -13,7 +13,7 @@
             }"
           ></span>
         </div>
-        <div @click="inTheaters">
+        <div @click="inTheaters" class="switcher__intheaters">
           <h3 :class="{ text_active: toggle }">In Theaters</h3>
         </div>
       </div>
@@ -53,8 +53,8 @@
         >
           <img
             class="swiper__slides__img"
-            :src="baseImageURL + movie.poster_path"
-            alt="movie image"
+            :src="imgUrl(movie.poster_path)"
+            loading="lazy"
           />
         </router-link>
         <div class="swiper__slides__description">
@@ -170,6 +170,9 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper;
     },
+    imgUrl(path) {
+      return this.baseImageURL + path;
+    },
     onSlideChange() {
       // console.log(swiper.activeIndex);
     },
@@ -245,9 +248,11 @@ export default {
   width: 150px;
   border-radius: 10px;
   border: 1px solid #032541;
-  margin-top: 19px;
+  margin-top: 24px;
   height: 35px;
   margin-left: 11px;
+  font-size: 15px;
+  height: 28px;
   div,
   h3 {
     height: 100%;
@@ -261,6 +266,10 @@ export default {
   .switcher__ontv {
     position: relative;
     width: 60px;
+    padding-left: 3px;
+  }
+  .switcher__intheaters {
+    padding-right: 3px;
   }
   .active_right {
     left: 70px;
