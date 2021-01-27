@@ -131,7 +131,7 @@
             class="crew__cards__list_card grow-animation"
           >
             <img
-              loading="lazy"
+             
               :src="
                 seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
               "
@@ -224,7 +224,7 @@
               :key="i"
             >
               <img
-                loading="lazy"
+               
                 :src="imgUrl(image.file_path)"
                 :alt="imgUrl(image.file_path)"
               />
@@ -250,16 +250,16 @@
     <div v-if="data" class="side-bar">
       <div class="social-icons">
         <a href="#"
-          ><img loading="lazy" src="../assets/facebook.png" alt="facebookicon"
+          ><img src="../assets/facebook.png" alt="facebookicon"
         /></a>
         <a href="#"
-          ><img loading="lazy" src="../assets/instagram.png" alt="instagramicon"
+          ><img src="../assets/instagram.png" alt="instagramicon"
         /></a>
         <a href="#"
-          ><img loading="lazy" src="../assets/twitter.png" alt="twittericon"
+          ><img src="../assets/twitter.png" alt="twittericon"
         /></a>
         <a href="#"
-          ><img loading="lazy" src="../assets/network.png" alt="networkicon"
+          ><img src="../assets/network.png" alt="networkicon"
         /></a>
       </div>
       <h4>Facts</h4>
@@ -270,7 +270,7 @@
         <ul>
           <li v-for="network in data.networks" :key="network.id">
             <img
-              loading="lazy"
+             
               class="img-width"
               :src="baseImageURL + network.logo_path"
             />

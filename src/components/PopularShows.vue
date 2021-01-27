@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb">
     <div class="d-flex">
       <h1>What's popular</h1>
       <div class="switcher">
@@ -52,10 +52,14 @@
           "
         >
           <img
+            v-lazyload
+            class="swiper__slides__img"
+            :data-src="imgUrl(movie.poster_path)"
+          />
+          <!-- <img
             class="swiper__slides__img"
             :src="imgUrl(movie.poster_path)"
-            loading="lazy"
-          />
+          /> -->
         </router-link>
         <div class="swiper__slides__description">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
@@ -142,7 +146,6 @@ import "swiper/swiper.scss";
 import "swiper/components/pagination/pagination.scss";
 import "swiper/components/navigation/navigation.scss";
 import axios from "axios";
-
 export default {
   components: {
     Swiper,
@@ -237,6 +240,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.mb{
+  margin-bottom: 150px;
+}
 .d-flex {
   display: flex;
 }

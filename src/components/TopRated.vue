@@ -46,11 +46,14 @@
           "
         >
           <img
+            v-lazyload
             class="img"
-            :src="baseImageURL + movie.poster_path"
-            alt="movie image"
-            loading="lazy"
+            :data-src="imgUrl(movie.poster_path)"
           />
+          <!-- <img
+            class="img"
+            :src="imgUrl(movie.poster_path)"
+          /> -->
         </router-link>
 
         <div class="movie_description " v-if="data.results">
@@ -163,6 +166,9 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper;
       console.log(swiper);
+    },
+    imgUrl(path) {
+      return this.baseImageURL + path;
     },
     redirect() {
       console.log("dd");
