@@ -119,24 +119,23 @@
     <div class="flex-column">
       <h2 class="crew__title">Series Cast</h2>
       <!-- cast / crew -->
-      <div class="crew__cards">
-        <ul
-          v-if="data.credits"
-          :class="{ fadeAnimation: isCrewLoading }"
-          class="crew__cards__list flex"
-        >
+      <div class="crew__cards" :class="{ fadeAnimation_crew: isCrewLoading }">
+        <ul v-if="data.credits" class="crew__cards__list flex">
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"
             :key="crew.credit_id"
             class="crew__cards__list_card grow-animation"
           >
             <img
-             
-              :src="
-                seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
-              "
+              v-lazyload
+              width="150"
+              height="250"
+              class="crew__cards__list_card grow-animation"
               :alt="crew.name"
               @load="imageCastLoaded"
+              :data-src="
+                seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
+              "
             />
             <h4>{{ crew.name }}</h4>
             <p>{{ crew.character }}</p>
@@ -223,11 +222,19 @@
               v-for="(image, i) in mediaData"
               :key="i"
             >
-              <img
-               
+              <!-- <img
                 :src="imgUrl(image.file_path)"
                 :alt="imgUrl(image.file_path)"
-              />
+              /> -->
+              <img
+              v-lazyload
+              width="200"
+              height="200"
+              :data-src="
+               imgUrl(image.file_path)
+              "
+              :alt="imgUrl(image.file_path)"
+            />
             </li>
             <li v-show="isViedosCliced" v-for="(viedo, i) in viedos" :key="i">
               <iframe
@@ -249,18 +256,10 @@
     <!-- Start side bar  -->
     <div v-if="data" class="side-bar">
       <div class="social-icons">
-        <a href="#"
-          ><img src="../assets/facebook.png" alt="facebookicon"
-        /></a>
-        <a href="#"
-          ><img src="../assets/instagram.png" alt="instagramicon"
-        /></a>
-        <a href="#"
-          ><img src="../assets/twitter.png" alt="twittericon"
-        /></a>
-        <a href="#"
-          ><img src="../assets/network.png" alt="networkicon"
-        /></a>
+        <a href="#"><img src="../assets/facebook.png" alt="facebookicon"/></a>
+        <a href="#"><img src="../assets/instagram.png" alt="instagramicon"/></a>
+        <a href="#"><img src="../assets/twitter.png" alt="twittericon"/></a>
+        <a href="#"><img src="../assets/network.png" alt="networkicon"/></a>
       </div>
       <h4>Facts</h4>
       <h4>Status</h4>
@@ -269,11 +268,7 @@
         <h4>Network</h4>
         <ul>
           <li v-for="network in data.networks" :key="network.id">
-            <img
-             
-              class="img-width"
-              :src="baseImageURL + network.logo_path"
-            />
+            <img class="img-width" :src="baseImageURL + network.logo_path" />
           </li>
         </ul>
       </div>
@@ -500,19 +495,21 @@ export default {
   }
 }
 .fadeAnimation {
-  animation: fadeAnimation 1s ease-in-out;
+  animation: fadeAnimation 1s ease-in;
+}
+.fadeAnimation_crew {
+  animation: fadeAnimation 1.9s ease-in;
+}
+@keyframes fadeAnimation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
 
-  @keyframes fadeAnimation {
-    0% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.5;
-    }
-
-    100% {
-      opacity: 1;
-    }
+  100% {
+    opacity: 1;
   }
 }
 .flex {

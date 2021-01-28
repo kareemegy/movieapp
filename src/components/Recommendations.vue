@@ -12,8 +12,11 @@
           "
         >
           <img
-            :src="baseImageURL + recommendation.backdrop_path"
-            :alt="'img for' + recommendation.name"
+            v-lazyload
+            width="280"
+            height="244"
+            :data-src="imgUrl(recommendation.backdrop_path)"
+            :alt="recommendation.name"
           />
           <p>{{ recommendation.name }}</p>
         </router-link>
@@ -54,14 +57,12 @@ export default {
     redirect() {
       console.log("worked");
     },
+     imgUrl(path) {
+      return this.baseImageURL + path;
+    },
   },
   created() {
     this.getData();
-  },
-  watch: {
-    baseImageURL(newVal, oldVal) {
-      console.log(newVal, oldVal);
-    },
   },
 };
 </script>
@@ -83,8 +84,6 @@ export default {
       padding: 10px;
       img {
         border-radius: 20px;
-        width: 280px;
-        height: 244px;
       }
     }
   }

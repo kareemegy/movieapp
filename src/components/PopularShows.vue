@@ -28,15 +28,15 @@
       :pagination="{ clickable: true }"
       @swiper="onSwiper"
       :class="{
-        fade_out: fade,
+        fade_out_toggle: fade,
       }"
     >
       <swiper-slide
-        class="swiper__slides"
+        class="swiper__slides "
+        id="slider_main"
         :class="{
           fade_out: !fade2,
           fade_out: data.results,
-          hide: !data.results,
         }"
         v-for="movie in data.results"
         :key="movie.id"
@@ -53,15 +53,15 @@
         >
           <img
             v-lazyload
-            class="swiper__slides__img"
+            width="150"
+            height="250"
+            class="swiper__slides__img fade_out"
+            @load="isLoaded"
             :data-src="imgUrl(movie.poster_path)"
+            :alt="movie.title ? movie.title : movie.name"
           />
-          <!-- <img
-            class="swiper__slides__img"
-            :src="imgUrl(movie.poster_path)"
-          /> -->
         </router-link>
-        <div class="swiper__slides__description">
+        <div class="swiper__slides__description fade_out">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
           <h4
             v-text="
@@ -74,13 +74,14 @@
       </swiper-slide>
       <!-- place holder swiper__slides -->
       <swiper-slide
-        class="swiper__slides"
+        class="swiper__slide"
+        id="placeholder"
         v-for="item in 10"
         :Key="item"
         v-show="!data.results"
       >
         <svg
-          v-show="!data.results"
+          v-if="!isImageLoaded"
           role="img"
           width="400"
           height="460"
@@ -164,14 +165,15 @@ export default {
       swiper: {},
       isImgsLoaded: false,
       toggle: false,
-      activeClass: {
-        log: true,
-      },
+      isImageLoaded: false,
     };
   },
   methods: {
     onSwiper(swiper) {
       this.swiper = swiper;
+    },
+    isLoaded() {
+      this.isImageLoaded = true;
     },
     imgUrl(path) {
       return this.baseImageURL + path;
@@ -179,10 +181,7 @@ export default {
     onSlideChange() {
       // console.log(swiper.activeIndex);
     },
-    test() {
-      this.activeClass.log = false;
-      console.log(this.activeClass.log);
-    },
+
     imgLoad() {
       this.isImgsLoaded = true;
     },
@@ -233,20 +232,22 @@ export default {
       `${process.env.VUE_APP_API_ROOT_URL}/tv/popular?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
     );
   },
-  mounted() {
-    console.log(this.activeClass.log);
-  },
 };
 </script>
 
 <style lang="scss" scoped>
-.mb{
+.mb {
   margin-bottom: 150px;
 }
 .d-flex {
   display: flex;
 }
-
+.hidden {
+  visibility: hidden;
+}
+.visible {
+  visibility: visible;
+}
 .switcher {
   display: flex;
   align-items: center;
@@ -323,8 +324,8 @@ h1 {
   margin: 24px 0px 5px 20px;
 }
 .swiper__slides__img {
-  width: 150px;
-  height: 250px;
+  // width: 150px;
+  // height: 250px;
   border-radius: 20px;
   padding: 8px;
 }
@@ -348,7 +349,10 @@ h1 {
 }
 
 .fade_out {
-  animation: fadeIn ease-in-out 1.1s;
+  animation: fadeIn ease-in 1.8s;
+}
+.fade_out_toggle {
+  animation: fadeIn ease-in 1.3s;
 }
 @keyframes fadeIn {
   0% {

@@ -44,15 +44,11 @@
             }`
           "
         >
-          <!-- <img
-            class="img"
-            :src="baseImageURL + movie.poster_path"
-            alt="movie image"
-          /> -->
             <img
             v-lazyload
-            class="swiper__slides__img"
+            class="img"
             :data-src="imgUrl(movie.poster_path)"
+            :alt="movie.title ? movie.title : movie.name"
           />
         </router-link>
 

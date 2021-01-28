@@ -1,8 +1,19 @@
 export default {
-  mounted  : (el) => {
+  mounted: (el) => {
     function loadImage() {
-      el.src = el.dataset.src;
-      console.log("wtfs");
+      // let slider_main = document.getElementById("slider_main"); // hide
+      // let placeholder = document.getElementById("placeholder"); // visivble
+      if (el) {
+        // el.addEventListener("load", () => {
+        //   setTimeout(() => {
+        //   }, 100);
+        // });
+        el.addEventListener("error", () => console.log("error"));
+        el.classList.add("fade_out");
+        el.src = el.dataset.src;
+        // placeholder.classList.add("hide");
+        // slider_main.classList.remove("hide");
+      }
     }
 
     function handleIntersect(entries, observer) {

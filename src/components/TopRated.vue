@@ -49,11 +49,8 @@
             v-lazyload
             class="img"
             :data-src="imgUrl(movie.poster_path)"
+            :alt="movie.title ? movie.title : movie.name"
           />
-          <!-- <img
-            class="img"
-            :src="imgUrl(movie.poster_path)"
-          /> -->
         </router-link>
 
         <div class="movie_description " v-if="data.results">
