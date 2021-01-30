@@ -4,17 +4,35 @@
     <h2>Millions of movies, TV shows and people to discover. Explore now.</h2>
     <label for=""> </label>
     <div class="search_bar">
+      <label for="search"></label>
       <input
+        @keydown.enter="searchQuery"
+        v-model="query"
         placeholder="Search for a movie, tv show, person......"
         type="text"
       />
-      <button>Search</button>
+      <button @click="searchQuery">Search</button>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      query: "",
+    };
+  },
+  methods: {
+    searchQuery() {
+      this.$router.push({
+        name: "search",
+        query: { query: this.query },
+      });
+      console.log("worked");
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -47,7 +65,7 @@ export default {};
 }
 input {
   font-size: 16px;
-  width: 1150px;
+  width: 90%;
   border-radius: 30px;
   border: 1px solid #fff;
   outline: none;

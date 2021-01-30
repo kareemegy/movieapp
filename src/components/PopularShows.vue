@@ -32,7 +32,7 @@
       }"
     >
       <swiper-slide
-        class="swiper__slides "
+        class="swiper__slides grow-animation "
         id="slider_main"
         :class="{
           fade_out: !fade2,

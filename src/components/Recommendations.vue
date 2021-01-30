@@ -6,9 +6,9 @@
         <router-link
           @click="redirect()"
           :to="
-            `/details/${showType}/${
-              recommendation.id
-            }/${recommendation.name.replace(/ /g, '')}`
+            `/details/${showType}/${recommendation.id}/${recommendationName(
+              recommendation.name
+            )} `
           "
         >
           <img
@@ -57,8 +57,11 @@ export default {
     redirect() {
       console.log("worked");
     },
-     imgUrl(path) {
+    imgUrl(path) {
       return this.baseImageURL + path;
+    },
+    recommendationName(showName) {
+      return showName.replace(/ /g, "");
     },
   },
   created() {

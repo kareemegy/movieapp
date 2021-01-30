@@ -120,23 +120,29 @@
       <h2 class="crew__title">Series Cast</h2>
       <!-- cast / crew -->
       <div class="crew__cards" :class="{ fadeAnimation_crew: isCrewLoading }">
-        <ul v-if="data.credits" class="crew__cards__list flex">
+        <ul v-if="data.credits.cast" class="crew__cards__list flex">
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"
             :key="crew.credit_id"
             class="crew__cards__list_card grow-animation"
           >
-            <img
-              v-lazyload
-              width="150"
-              height="250"
-              class="crew__cards__list_card grow-animation"
-              :alt="crew.name"
-              @load="imageCastLoaded"
-              :data-src="
-                seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
-              "
-            />
+            <router-link
+              @click="redirect()"
+              :to="`/person/${crew.credit_id}/${crewName(crew.name)}`"
+            >
+              <img
+                v-lazyload
+                width="150"
+                height="250"
+                class="crew__cards__list_card grow-animation"
+                :alt="crew.name"
+                @load="imageCastLoaded"
+                :data-src="
+                  seriesCastLoadedImage(crew.profile_path, data.credits.cast[i])
+                "
+              />
+            </router-link>
+
             <h4>{{ crew.name }}</h4>
             <p>{{ crew.character }}</p>
           </li>
@@ -222,19 +228,13 @@
               v-for="(image, i) in mediaData"
               :key="i"
             >
-              <!-- <img
-                :src="imgUrl(image.file_path)"
-                :alt="imgUrl(image.file_path)"
-              /> -->
               <img
-              v-lazyload
-              width="200"
-              height="200"
-              :data-src="
-               imgUrl(image.file_path)
-              "
-              :alt="imgUrl(image.file_path)"
-            />
+                v-lazyload
+                width="200"
+                height="200"
+                :data-src="imgUrl(image.file_path)"
+                :alt="imgUrl(image.file_path)"
+              />
             </li>
             <li v-show="isViedosCliced" v-for="(viedo, i) in viedos" :key="i">
               <iframe
@@ -278,12 +278,16 @@
       </div>
       <div v-if="data.budget">
         <h4>Budget</h4>
-        <p>${{ data.budget }}</p>
+        <p>
+          <b>{{ Number(data.budget).toLocaleString() }}$</b>
+        </p>
       </div>
 
       <div v-if="data.revenue">
         <h4>Revenue</h4>
-        <p>${{ data.revenue }}</p>
+        <p>
+          <b>{{ Number(data.revenue).toLocaleString() }}$</b>
+        </p>
       </div>
       <div>
         <h4 v-if="data.spoken_languages">Original Language</h4>
@@ -427,6 +431,9 @@ export default {
     imgUrl(path) {
       return this.baseImageURL + path;
     },
+    crewName(name) {
+      return name.replace(/ /g, "");
+    },
   },
   created() {
     this.showID = this.$route.params.id;
@@ -450,12 +457,6 @@ export default {
 <style lang="scss" scoped>
 .header-size {
   height: 70px !important;
-}
-.grow-animation {
-  transition: all 0.2s ease-in-out;
-}
-.grow-animation:hover {
-  transform: scale(1.02);
 }
 .test {
   background: #000;
@@ -556,6 +557,9 @@ export default {
     flex-direction: column;
     padding-top: 50px;
     .header__description__title {
+      h1 {
+        font-size: 28px;
+      }
       margin-bottom: 8px;
       p {
         display: flex;

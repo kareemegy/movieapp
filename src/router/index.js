@@ -2,19 +2,28 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: () => import("@/views/HomePage.vue"),
   },
-
   {
     path: "/details/:type/:id/:name",
-    name: "Details",
-    component: () => import("@/components/GetDetails.vue"),
+    name: "details",
+    component: () => import("@/views/GetDetails.vue"),
   },
-
+  {
+    path: "/person/:id/:name",
+    name: "person",
+    component: () => import("@/views/Persone.vue"),
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: () => import("@/views/SearchPage.vue"),
+  },
   {
     path: "/:catchAll(.*)",
-    component: () => import("@/components/NotFound.vue"),
+    name: "404",
+    component: () => import("@/views/NotFound.vue"),
   },
 ];
 

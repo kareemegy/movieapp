@@ -30,7 +30,7 @@
       }"
     >
       <swiper-slide
-        class="slides"
+        class="slides grow-animation"
         :class="{ fade_out: !fade2, fade_out2: data.results }"
         v-for="movie in data.results"
         :key="movie.id"
