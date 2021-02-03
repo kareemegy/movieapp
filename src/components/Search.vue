@@ -25,11 +25,12 @@ export default {
   },
   methods: {
     searchQuery() {
-      this.$router.push({
-        name: "search",
-        query: { query: this.query },
-      });
-      console.log("worked");
+      if (this.query) {
+        this.$router.push({
+          name: "search",
+          query: { query: this.query },
+        });
+      }
     },
   },
 };

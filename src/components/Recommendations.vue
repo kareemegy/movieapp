@@ -18,8 +18,8 @@
             :data-src="imgUrl(recommendation.backdrop_path)"
             :alt="recommendation.name"
           />
-          <p>{{ recommendation.name }}</p>
         </router-link>
+        <p>{{ recommendation.name }}</p>
       </li>
     </ul>
   </div>
@@ -61,7 +61,9 @@ export default {
       return this.baseImageURL + path;
     },
     recommendationName(showName) {
-      return showName.replace(/ /g, "");
+      if (showName) {
+        return showName.replace(/ /g, "");
+      }
     },
   },
   created() {
