@@ -4,7 +4,7 @@
     <Search />
     <PopularShows />
     <TopRated />
-    <!-- <LatestTrailers /> -->
+    <LatestTrailers />
     <Trending />
   </div>
   <Footer />
@@ -13,7 +13,7 @@
 <script>
 import Search from "@/components/Search.vue";
 import PopularShows from "@/components/PopularShows.vue";
-// import LatestTrailers from "@/components/LatestTrailers.vue";
+import LatestTrailers from "@/components/LatestTrailers.vue";
 import TopRated from "@/components/TopRated.vue";
 import Trending from "@/components/Trending.vue";
 import Header from "@/components/Header.vue";
@@ -22,6 +22,7 @@ export default {
   components: {
     Search,
     PopularShows,
+    LatestTrailers,
     TopRated,
     Trending,
     Header,

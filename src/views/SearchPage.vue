@@ -84,15 +84,13 @@
             <p v-if="searchInfo.overview">
               {{ searchInfo.overview.substring(0, 299) }}
             </p>
-            <p v-else>
-              there is no data to display
-            </p>
           </div>
         </div>
       </div>
       <div v-if="!isLoading" class="loader">
         <img src="../assets/loaderImg.gif" alt="Loader" />
       </div>
+     
     </section>
   </div>
 </template>

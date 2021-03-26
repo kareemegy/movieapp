@@ -16,11 +16,9 @@
       </div>
     </div>
 
-    <!--  placeholder lib-->
     <swiper
       :slides-per-view="4"
       @swiper="onSwiper"
-      @slideChange="onSlideChange"
       class="slider_container"
       :style="sliderBG.backgroundImage ? sliderBG : placeholderBG"
       :class="{
@@ -139,9 +137,8 @@ export default {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center center",
-        transition: "background-image 0.5s linear",
+        transition: "all 500ms ease",
       },
-
       placeholderBG: {
         backgroundImage:
           "linear-gradient(to right, rgba(3, 37, 65, 0.8) 0%, rgb(3 37 65 / 22%) 100%)",
@@ -149,17 +146,18 @@ export default {
     };
   },
   methods: {
-    onSwiper(swiper) {
-      console.log(swiper);
-    },
-    onSlideChange() {
-      // console.log("slide change");
+    onSwiper() {
+      // console.log(swiper);
     },
     async getData(URL) {
       try {
         let response = await fetch(URL);
         let data = await response.json();
         this.data = data;
+        // console.log(data);
+        this.changeBackgroundImage(
+          this.baseImageURL + this.data.results[0].poster_path
+        );
       } catch (err) {
         console.error(err);
       }
@@ -174,7 +172,6 @@ export default {
         rgba(3, 37, 65, 0.8) 0%,
         rgba(3, 37, 65, 0) 100%
       ),url(${imgPATH})`;
-      console.log(this.sliderBG.backgroundImage);
     },
     async onTv() {
       console.log("On TV");
@@ -197,6 +194,9 @@ export default {
       console.log("inTheaters");
     },
   },
+  imgUrl(path) {
+    return this.baseImageURL + path;
+  },
   created() {
     this.getData(this.inTheatersURL);
   },
@@ -216,7 +216,7 @@ h1 {
 
 .img {
   width: 300px;
-  height: 250px;
+  height: 180px;
   border-radius: 10px;
 }
 
@@ -227,8 +227,8 @@ h1 {
   align-items: center;
   justify-content: center;
   .imgcontainer {
+    transition: background-image 0.5s linear;
     position: relative;
-
     :nth-child(2) {
       position: absolute;
       left: 56%;
@@ -236,28 +236,11 @@ h1 {
       top: 54%;
       margin-top: -50px;
     }
-    img {
-      transform: scale(1);
-      transition: transform 0.4s ease-out;
-    }
-    img:hover {
-      transform: scale(1.1);
-      transition: transform 0.4s ease-out;
-    }
   }
 }
-@keyframes zoominoutsinglefeatured {
-  0% {
-    transform: scale(1, 1);
-  }
-  50% {
-    transform: scale(1.2, 1.2);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
+.slides:hover {
+  transform: scale(1.06);
 }
-
 .movie_description {
   text-align: center;
   font-size: 13px;
@@ -271,8 +254,6 @@ h1 {
   h4 {
     margin-top: 3px;
   }
-
-
 }
 
 .d-flex {

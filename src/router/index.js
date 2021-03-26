@@ -21,6 +21,11 @@ const routes = [
     component: () => import("@/views/SearchPage.vue"),
   },
   {
+    path: "/keywords",
+    name: "keywords",
+    component: () => import("@/views/Keywords.vue"),
+  },
+  {
     path: "/:catchAll(.*)",
     name: "404",
     component: () => import("@/views/NotFound.vue"),

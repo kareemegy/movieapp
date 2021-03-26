@@ -119,7 +119,7 @@
     <div class="flex-column">
       <h2 class="crew__title">Series Cast</h2>
       <!-- cast / crew -->
-      <div class="crew__cards" :class="{ fadeAnimation_crew: isCrewLoading }">
+      <div v-if="data.credits" class="crew__cards" :class="{ fadeAnimation_crew: isCrewLoading }">
         <ul v-if="data.credits.cast" class="crew__cards__list flex">
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"

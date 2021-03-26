@@ -7,7 +7,7 @@
           @click="redirect()"
           :to="
             `/details/${showType}/${recommendation.id}/${recommendationName(
-              recommendation.name
+              recommendation.name ?recommendation.name :recommendation.title 
             )} `
           "
         >
@@ -19,7 +19,7 @@
             :alt="recommendation.name"
           />
         </router-link>
-        <p>{{ recommendation.name }}</p>
+        <p>{{ recommendation.name ?recommendation.name :recommendation.title }}</p>
       </li>
     </ul>
   </div>
@@ -51,6 +51,7 @@ export default {
           `https://api.themoviedb.org/3/${this.showType}/${this.showId}/recommendations?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`
         )
         .then(({ data }) => {
+          console.log(data);
           return (this.recommendationData = data.results);
         });
     },
