@@ -237,7 +237,7 @@ export default {
 
 <style lang="scss" scoped>
 .mb {
-  margin-bottom: 150px;
+  margin-bottom: 50px;
 }
 .d-flex {
   display: flex;

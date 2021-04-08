@@ -119,7 +119,11 @@
     <div class="flex-column">
       <h2 class="crew__title">Series Cast</h2>
       <!-- cast / crew -->
-      <div v-if="data.credits" class="crew__cards" :class="{ fadeAnimation_crew: isCrewLoading }">
+      <div
+        v-if="data.credits"
+        class="crew__cards"
+        :class="{ fadeAnimation_crew: isCrewLoading }"
+      >
         <ul v-if="data.credits.cast" class="crew__cards__list flex">
           <li
             v-for="(crew, i) in data.credits.cast.slice(0, 6)"
@@ -298,20 +302,32 @@
         </ul>
       </div>
       <!-- keywords -->
-      <div v-if="data" class="keywords">
-        <h4 v-if="data.results || data.keywords">
+      <div v-if="data.keywords" class="keywords">
+        <h4>
           Keywords
         </h4>
-        <ul v-if="data.results">
-          <li v-for="keyword in data.results" :key="keyword.id">
+
+        <ul v-if="data.keywords.results || data.keywords.keywords">
+          <li
+            v-for="keyword in data.keywords.results
+              ? data.keywords.results
+              : data.keywords.keywords"
+            :key="keyword.id"
+          >
             <a href="#">{{ keyword.name }}</a>
           </li>
         </ul>
-        <ul v-if="data.keywords">
-          <li v-for="keyword in data.keywords" :key="keyword.id">
-            <a href="#">{{ keyword.name }}</a>
-          </li>
-        </ul>
+        <p
+          v-if="
+            data.keywords.results
+              ? !data.keywords.results.length
+              : data.keywords.keywords
+              ? !data.keywords.keywords.length
+              : ''
+          "
+        >
+          No Keywords Found
+        </p>
       </div>
     </div>
     <!-- End side bar  -->
@@ -373,7 +389,9 @@ export default {
           this.$progress.finish();
         })
         .catch((err) => {
+          // this.$router.push({ name: "notfound" });
           console.error(err);
+          // return;
         });
     },
     getBackDropColor() {
@@ -438,7 +456,7 @@ export default {
   created() {
     this.showID = this.$route.params.id;
     this.showType = this.$route.params.type;
-    let appendToResponse = "&append_to_response=videos,images,credits"; // add endpoints to get more data from the request
+    let appendToResponse = "&append_to_response=videos,images,credits,keywords"; // add endpoints to get more data from the request
     let URL = `${process.env.VUE_APP_API_ROOT_URL}/${this.showType}/${this.showID}
     ?api_key=${process.env.VUE_APP_API_KEY}${appendToResponse}`;
     this.getData(URL);

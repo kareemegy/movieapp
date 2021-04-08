@@ -19,7 +19,7 @@
     <swiper
       :slides-per-view="4"
       @swiper="onSwiper"
-      class="slider_container"
+      class="slider_container bg_img"
       :style="sliderBG.backgroundImage ? sliderBG : placeholderBG"
       :class="{
         fade_out: fade,
@@ -30,6 +30,7 @@
         :class="{ fade_out: !fade2, fade_out2: data.results }"
         v-for="movie in data.results"
         :key="movie.id"
+        @click="showTrailer(movie)"
       >
         <div class="imgcontainer">
           <img
@@ -40,14 +41,27 @@
             :src="baseImageURL + movie.poster_path"
             alt="movie image"
           />
-          <img src="../assets/playicon.png" alt="play icon" class="playIcon" />
+          <img src="../assets/playicon.png" alt="play icon" class="playicon" />
         </div>
         <div class="movie_description " v-if="data.results">
           <h3 v-text="movie.title ? movie.title : movie.name"></h3>
           <!-- <h4 v-text="handleOverviewText(movie.overview)"></h4> -->
         </div>
+        <!-- <iframe
+          width="560"
+          height="280"
+          :src="trailerURL"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe> -->
       </swiper-slide>
-      <swiper-slide class="slides" v-for="item in 4" :Key="item">
+      <swiper-slide
+        v-show="!data.results"
+        class="slides"
+        v-for="item in 4"
+        :Key="item"
+      >
         <svg
           v-if="!data.results"
           role="img"
@@ -104,12 +118,14 @@
           </defs>
         </svg>
       </swiper-slide>
+      <div class="slider_img_wrapper"></div>
     </swiper>
   </div>
 </template>
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/swiper.scss";
+import axios from "axios";
 export default {
   components: {
     Swiper,
@@ -120,24 +136,19 @@ export default {
       baseImageURL: "https://image.tmdb.org/t/p/w500/",
       data: {},
       trailersData: {},
+      trailerURL: "",
+      isMovieOrTv: "movie",
       onTvURl:
         "https://api.themoviedb.org/3/movie/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
       inTheatersURL:
         "https://api.themoviedb.org/3/tv/popular?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US&page=1",
-      onTvlatestTrailers:
-        "https://api.themoviedb.org/3/tv/{tv_id}/videos?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US",
-      inTheaterslatestTrailers:
-        "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=37c26238f996be5bc2090ce0085ff210&language=en-US",
+
       isActive: true,
       isSwitch: true,
       fade: false,
       fade2: true,
       sliderBG: {
         backgroundImage: "",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center",
-        transition: "all 500ms ease",
       },
       placeholderBG: {
         backgroundImage:
@@ -167,11 +178,7 @@ export default {
     },
 
     changeBackgroundImage(imgPATH) {
-      this.sliderBG.backgroundImage = `linear-gradient(
-        to right,
-        rgba(3, 37, 65, 0.8) 0%,
-        rgba(3, 37, 65, 0) 100%
-      ),url(${imgPATH})`;
+      this.sliderBG.backgroundImage = `url(${imgPATH})`;
     },
     async onTv() {
       console.log("On TV");
@@ -181,6 +188,7 @@ export default {
         this.isActive = true;
         this.isSwitch = true;
         this.getData(this.inTheatersURL);
+        this.isMovieOrTv = "movie";
       }
     },
     async inTheaters() {
@@ -190,12 +198,39 @@ export default {
         this.isActive = false;
         this.isSwitch = false;
         this.getData(this.onTvURl);
+        this.isMovieOrTv = "tv";
       }
       console.log("inTheaters");
     },
-  },
-  imgUrl(path) {
-    return this.baseImageURL + path;
+    async showTrailer(showData) {
+      // TODO: get the show details
+      console.log(showData);
+      // TODO: Get youtube keyWatch show
+      try {
+        let res = await axios.get(
+          `http://api.themoviedb.org/3/${this.isMovieOrTv}/${showData.id}/videos?api_key=37c26238f996be5bc2090ce0085ff210`
+        );
+        console.log(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+      // TODO: Display show Trailer
+      // let url = `https://www.youtube.com/embed/`;
+    },
+    ontvOrTheaters(showType, id) {
+      showType == "tv"
+        ? `https://api.themoviedb.org/3/tv/
+      ${id}/
+      videos?
+      api_key=37c26238f996be5bc2090ce0085ff210&language=en-US`
+        : `https://api.themoviedb.org/3/tv/
+      ${id}/
+      videos?
+      api_key=37c26238f996be5bc2090ce0085ff210&language=en-US`;
+    },
+    imgUrl(path) {
+      return this.baseImageURL + path;
+    },
   },
   created() {
     this.getData(this.inTheatersURL);
@@ -204,10 +239,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.slider_container {
-  height: 320px;
-  padding: 10px;
-}
 h1 {
   font-family: sans-serif;
   font-size: 26px;
@@ -219,28 +250,62 @@ h1 {
   height: 180px;
   border-radius: 10px;
 }
-
-.slides {
-  transition: all 0.5s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .imgcontainer {
-    transition: background-image 0.5s linear;
-    position: relative;
-    :nth-child(2) {
-      position: absolute;
-      left: 56%;
-      margin-left: -50px;
-      top: 54%;
-      margin-top: -50px;
+.slider_container {
+  position: relative;
+  height: 320px;
+  padding: 10px;
+  .slider_img_wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(
+      to right,
+      rgba(3, 37, 65, 0.8) 0%,
+      rgba(3, 37, 65, 0) 100%
+    );
+  }
+  .slides {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1);
+    transition: transform 0.3s ease-in-out;
+    .imgcontainer {
+      transition: background-image 0.5s linear;
+      position: relative;
+      :nth-child(2) {
+        position: absolute;
+        left: 56%;
+        margin-left: -50px;
+        top: 54%;
+        margin-top: -50px;
+      }
+      .playicon {
+        transition: transform 0.3s ease-in-out;
+      }
+    }
+  }
+  .slides:hover {
+    transform: scale(1.06);
+    transition: transform 0.3s ease-in-out;
+    .playicon {
+      transition: transform 0.3s ease-in-out;
+      transform: scale(1.3);
     }
   }
 }
-.slides:hover {
-  transform: scale(1.06);
+.bg_img {
+  background-position: center 25%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fff;
+  transition: all 0.5s;
 }
+
 .movie_description {
   text-align: center;
   font-size: 13px;
